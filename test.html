@@ -1,0 +1,33 @@
+<!-- Load TensorFlow.js. This is required to use MobileNet. -->
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.0.1"> </script>
+<!-- Load the MobileNet model. -->
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/mobilenet@1.0.0"> </script>
+
+<!-- Replace this with your image. Make sure CORS settings allow reading the image! -->
+<h1>prediction:</h1>
+<p id="pred">...</p>
+<p id="prop">...</p>
+<p id="time">...</p>
+
+<!-- <img id="img" src="cat.jpg"></img> -->
+<img id="img" src="phone.jpg"></img>
+
+<script>
+
+  const img = document.getElementById('img');
+  const pred = document.getElementById('pred');
+  const prop = document.getElementById('prop');
+  const time = document.getElementById('time');
+
+  mobilenet.load().then(model => {
+    var startTime = performance.now();
+
+    model.classify(img).then(predictions => {
+      console.log('Predictions: ');
+      console.log(predictions);
+      pred.innerText = predictions[0].className
+      prop.innerText = (predictions[0].probability * 100).toFixed(2) + "%"
+      time.innerText = "Time: " + (performance.now() - startTime).toFixed(2) + "ms"
+    });
+  });
+</script>
