@@ -4,15 +4,31 @@ import { CameraType } from 'expo-camera/build/Camera.types';
 import * as ImagePicker from 'expo-image-picker';
 import * as MediaLibrary from 'expo-media-library';
 import { Box, Center, IBoxProps } from 'native-base';
+import { Overlay } from 'native-base/lib/typescript/components/primitives';
 import React, { useEffect, useRef, useState } from 'react';
-import { Dimensions, Platform, Pressable, Text, View } from 'react-native';
-import { useNavigate } from 'react-router-native';
+import {
+    Dimensions,
+    Image,
+    ImageBackground,
+    ImageBackgroundBase,
+    Platform,
+    Pressable,
+    Text,
+    View,
+} from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate, useParams } from 'react-router-native';
+import {
+    setDocumentationImage,
+    setInstructionImage,
+} from '../../Redux/Slices/templateSlice';
+import { RootState } from '../../Redux/store';
 
 //import { setMedia } from '../../features/media/media-slice';
 
 type CameraProps = {};
 
-const Camera: React.FC<CameraProps> = (props) => {
+const Camera: React.FC<CameraProps> = ({}) => {
     const windowWidth = Dimensions.get('window').width;
     const [hasPermission, setHasPermission] = useState(false);
     const [hasGalleryPermissions, setHasGalleryPermissions] = useState(false);
@@ -25,6 +41,9 @@ const Camera: React.FC<CameraProps> = (props) => {
     const [flashMode, setFlashMode] = useState(
         CameraView.Constants.FlashMode.auto
     );
+    let { mode } = useParams();
+    const dispatch = useDispatch();
+    const count = useSelector((state: RootState) => state.counter);
 
     const camera = useRef<CameraView | any>(null);
 
@@ -83,13 +102,6 @@ const Camera: React.FC<CameraProps> = (props) => {
         return <Text>No access to camera</Text>;
     }
 
-    const openMediaEditor = (uri: string, type: 'image' | 'video') => {
-        //console.log(uri, type);
-        //dispatch(setMedia({ uri, type }));
-        //props.setMedia({ uri, type });
-        //props.navigation.navigate('media_editor');
-    };
-
     const rotateCamera = () => {
         setType(
             type === CameraView.Constants.Type.back
@@ -106,35 +118,15 @@ const Camera: React.FC<CameraProps> = (props) => {
         );
     };
 
-    const startRecording = async () => {
-        try {
-            setRecording(true);
-            const video = await camera.current.recordAsync({
-                maxDuration: 60,
-                quality: CameraView.Constants.VideoQuality['720p'],
-                videoBitrate: 4 * 1000 * 1000,
-            });
-
-            //set local uri, and set the uploadFilePath on the card object + _output.mp4 (the final transcoded file is stored as <uploadFilePath>
-
-            //so with this url, we can get a download link with getDownloadURL, which is exported by the useFireStorage hook
-            openMediaEditor(video.uri, 'video');
-        } catch (error) {
-            console.log(error);
-        }
-    };
-
-    const stopRecording = () => {
-        setRecording(false);
-        if (Platform.OS !== 'web') {
-            camera.current.stopRecording();
-        }
-    };
-
     const takePicture = async () => {
         const picture = await camera.current.takePictureAsync();
-
-        openMediaEditor(picture.uri, 'image');
+        console.log(mode);
+        if (mode == 'instruction') {
+            dispatch(setInstructionImage(picture.uri));
+        } else if (mode == 'documentation') {
+            dispatch(setDocumentationImage(picture.uri));
+        }
+        navigate('/');
     };
 
     const pickFromGallery = async () => {
@@ -174,7 +166,7 @@ const Camera: React.FC<CameraProps> = (props) => {
                         <Pressable
                             testID='backArrow'
                             onPress={() => {
-                                navigate("/")
+                                navigate('/');
                             }}
                         >
                             <Box
@@ -215,18 +207,27 @@ const Camera: React.FC<CameraProps> = (props) => {
                             )}
                     </Box>
                     <Box testID='camera' flex={1}>
-                        <CameraView
-                            ratio='4:3'
-                            ref={camera}
-                            style={{
-                                aspectRatio: 1 / (4 / 3),
-                                width: getWidth(),
-                                height: getWidth() * 1.333,
-                            }}
-                            onCameraReady={() => setCameraReady(true)}
-                            type={type}
-                            flashMode={flashMode}
-                        ></CameraView>
+                        <ImageBackground
+                            source={{ uri: count.documentationImageUri }}
+                        >
+                            <CameraView
+                                ratio='4:3'
+                                ref={camera}
+                                style={{
+                                    aspectRatio: 1 / (4 / 3),
+                                    width: getWidth(),
+                                    height: getWidth() * 1.333,
+                                    opacity:
+                                        mode == 'instruction' &&
+                                        count.documentationImageUri
+                                            ? 0.7
+                                            : 1,
+                                }}
+                                onCameraReady={() => setCameraReady(true)}
+                                type={type}
+                                flashMode={flashMode}
+                            ></CameraView>
+                        </ImageBackground>
                     </Box>
                     <Box
                         testID='footer'
@@ -250,7 +251,7 @@ const Camera: React.FC<CameraProps> = (props) => {
                                     color='white'
                                 />
                                 <Text style={{ color: 'white', marginLeft: 5 }}>
-                                    Documentation
+                                    {mode?.toLocaleUpperCase()}
                                 </Text>
                             </Box>
                         </Box>
@@ -273,7 +274,7 @@ const Camera: React.FC<CameraProps> = (props) => {
                                 <Pressable
                                     onPress={() => {
                                         console.log(
-                                            'File upload is not implemented yet'
+                                            'File system/ gallery not implemented'
                                         );
                                     }}
                                 >
@@ -309,12 +310,7 @@ const Camera: React.FC<CameraProps> = (props) => {
                                     >
                                         <Pressable
                                             disabled={!cameraReady}
-                                            onLongPress={() => startRecording()}
-                                            onPress={() =>
-                                                recording
-                                                    ? stopRecording()
-                                                    : takePicture()
-                                            }
+                                            onPress={() => takePicture()}
                                         >
                                             <Ionicons
                                                 name={
@@ -358,8 +354,7 @@ const Camera: React.FC<CameraProps> = (props) => {
 };
 
 const selected = {
-    borderBottomColor: 'white',
-    borderBottomWidth: 1,
+    alignItems: 'center',
 };
 
 const boxBorderRadius = {

@@ -4,6 +4,7 @@ import { Provider } from 'react-redux';
 import { NativeBaseProvider } from 'native-base';
 import Camera from './src/Screens/Camera/Camera';
 import Home from './src/Screens/Home/Home';
+import { useFonts } from 'expo-font';
 
 const App = (): JSX.Element => {
     return (
@@ -12,7 +13,7 @@ const App = (): JSX.Element => {
                 <NativeRouter>
                     <Routes>
                         <Route path='/' element={<Home />} />
-                        <Route path='/camera' element={<Camera />} />
+                        <Route path='/camera/:mode' element={<Camera />} />
                     </Routes>
                 </NativeRouter>
             </NativeBaseProvider>
