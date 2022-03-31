@@ -208,7 +208,8 @@ const Camera: React.FC<CameraProps> = ({}) => {
                     </Box>
                     <Box testID='camera' flex={1}>
                         <ImageBackground
-                            source={{ uri: count.documentationImageUri }}
+                            source={{uri: count.instructionImageUri}}
+                            style={{width: '100%', height: '100%'}}
                         >
                             <CameraView
                                 ratio='4:3'
@@ -216,12 +217,15 @@ const Camera: React.FC<CameraProps> = ({}) => {
                                 style={{
                                     aspectRatio: 1 / (4 / 3),
                                     width: getWidth(),
-                                    height: getWidth() * 1.333,
-                                    opacity:
-                                        mode == 'instruction' &&
-                                        count.documentationImageUri
-                                            ? 0.7
-                                            : 1,
+                                    height: getWidth(),
+                                    // aspectRatio: 1 / (4 / 3),
+                                    // width: getWidth(),
+                                    // height: getWidth() * 1.333
+                                    // opacity:
+                                    //     mode == 'instruction' &&
+                                    //     count.documentationImageUri
+                                    //         ? 0.7
+                                    //         : 1,
                                 }}
                                 onCameraReady={() => setCameraReady(true)}
                                 type={type}
@@ -243,7 +247,7 @@ const Camera: React.FC<CameraProps> = ({}) => {
                             <Box
                                 testID='photo'
                                 flexDirection={'row'}
-                                style={selected}
+                                style={{alignItems: 'center'}}
                             >
                                 <Ionicons
                                     name='image-outline'
@@ -351,10 +355,6 @@ const Camera: React.FC<CameraProps> = ({}) => {
             </Center>
         </>
     );
-};
-
-const selected = {
-    alignItems: 'center',
 };
 
 const boxBorderRadius = {

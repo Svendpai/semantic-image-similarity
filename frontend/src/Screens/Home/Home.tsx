@@ -5,8 +5,9 @@ import { Box, Button, HStack, Text, View, VStack } from 'native-base';
 import { useNavigate } from 'react-router-native';
 import { useFonts } from 'expo-font';
 import { TouchableOpacity, Image } from 'react-native';
+import Simtest from '../../../Similarity';
 
-interface HomeProps {}
+interface HomeProps { }
 
 const Home: React.FC<HomeProps> = (props) => {
     const count = useSelector((state: RootState) => state.counter);
@@ -27,13 +28,13 @@ const Home: React.FC<HomeProps> = (props) => {
     }
 
     return (
-        <Box
+        <Box safeArea
             style={{
                 width: '100%',
                 height: '100%',
                 backgroundColor: 'black',
                 flexDirection: 'column',
-                padding: '5%',
+                padding: 20
             }}
         >
             <Box
@@ -53,6 +54,7 @@ const Home: React.FC<HomeProps> = (props) => {
                     {'Match Overlay'}
                 </Text>
             </Box>
+            <Simtest/>
             <HStack
                 style={{
                     justifyContent: 'space-between',
@@ -108,13 +110,20 @@ const Home: React.FC<HomeProps> = (props) => {
                                     textAlign={'center'}
                                     fontSize={12}
                                     fontFamily={'Poppins-Medium'}
-                                >
-                                    add
-                                    <br />
-                                    <strong>instruction</strong>
-                                    <br />
-                                    image
-                                </Text>
+                                    color={'#d3d3d3'}
+                                > add </Text>
+                                <Text
+                                    textAlign={'center'}
+                                    fontSize={12}
+                                    fontFamily={'Poppins-Bold'}
+                                    color={'#d3d3d3'}
+                                > instruction </Text>
+                                <Text
+                                    textAlign={'center'}
+                                    fontSize={12}
+                                    fontFamily={'Poppins-Medium'}
+                                    color={'#d3d3d3'}
+                                > image </Text>
                             </Box>
                         )}
                     </Box>
@@ -140,7 +149,7 @@ const Home: React.FC<HomeProps> = (props) => {
                                 fontSize: 15,
                             }}
                         >
-                            {'Documentation'}
+                            Documentation
                         </Text>
                         {count.documentationImageUri ? (
                             <Image
@@ -166,15 +175,22 @@ const Home: React.FC<HomeProps> = (props) => {
                             >
                                 <Text
                                     textAlign={'center'}
-                                    fontFamily={'Poppins-Medium'}
                                     fontSize={12}
-                                >
-                                    add
-                                    <br />
-                                    <strong>documentation</strong>
-                                    <br />
-                                    image
-                                </Text>
+                                    fontFamily={'Poppins-Medium'}
+                                    color={'#d3d3d3'}
+                                > add </Text>
+                                <Text
+                                    textAlign={'center'}
+                                    fontSize={12}
+                                    fontFamily={'Poppins-Bold'}
+                                    color={'#d3d3d3'}
+                                > documentation </Text>
+                                <Text
+                                    textAlign={'center'}
+                                    fontSize={12}
+                                    fontFamily={'Poppins-Medium'}
+                                    color={'#d3d3d3'}
+                                > image </Text>
                             </Box>
                         )}
                     </Box>

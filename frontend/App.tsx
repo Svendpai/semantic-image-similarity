@@ -5,6 +5,7 @@ import { NativeBaseProvider } from 'native-base';
 import Camera from './src/Screens/Camera/Camera';
 import Home from './src/Screens/Home/Home';
 import { useFonts } from 'expo-font';
+import React from 'react';
 
 const App = (): JSX.Element => {
     return (
