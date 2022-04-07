@@ -16,6 +16,7 @@
     "expo-media-library": "~14.0.0",
     "expo-status-bar": "~1.2.0",
     "native-base": "^3.3.7",
+    "phash-js": "^0.3.0",
     "react": "17.0.1",
     "react-dom": "17.0.1",
     "react-native": "0.64.3",

@@ -23,6 +23,7 @@ import {
     setInstructionImage,
 } from '../../Redux/Slices/templateSlice';
 import { RootState } from '../../Redux/store';
+import AlgorithmDictionary from '../../Services/SimilarityCalculator';
 
 //import { setMedia } from '../../features/media/media-slice';
 
@@ -120,6 +121,7 @@ const Camera: React.FC<CameraProps> = ({}) => {
 
     const takePicture = async () => {
         const picture = await camera.current.takePictureAsync();
+        AlgorithmDictionary.pHash.calculateSimilarity(picture.uri, picture.uri);
         console.log(mode);
         if (mode == 'instruction') {
             dispatch(setInstructionImage(picture.uri));
@@ -208,7 +210,7 @@ const Camera: React.FC<CameraProps> = ({}) => {
                     </Box>
                     <Box testID='camera' flex={1}>
                         <ImageBackground
-                            source={{ uri: count.documentationImageUri }}
+                            source={{ uri: count.instructionImageUri }}
                         >
                             <CameraView
                                 ratio='4:3'
@@ -218,7 +220,7 @@ const Camera: React.FC<CameraProps> = ({}) => {
                                     width: getWidth(),
                                     height: getWidth() * 1.333,
                                     opacity:
-                                        mode == 'instruction' &&
+                                        mode == 'documentation' &&
                                         count.documentationImageUri
                                             ? 0.7
                                             : 1,
