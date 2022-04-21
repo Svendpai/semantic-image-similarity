@@ -23,6 +23,7 @@ import {
     setInstructionImage,
 } from '../../Redux/Slices/templateSlice';
 import { RootState } from '../../Redux/store';
+import TensorCamera from './TensorCamera';
 
 //import { setMedia } from '../../features/media/media-slice';
 
@@ -32,12 +33,15 @@ const Camera: React.FC<CameraProps> = ({}) => {
     const windowWidth = Dimensions.get('window').width;
     const [hasPermission, setHasPermission] = useState(false);
     const [hasGalleryPermissions, setHasGalleryPermissions] = useState(false);
+    const [liveMode, setLiveMode] = useState<boolean>(false);
+
     const [recording, setRecording] = useState<boolean>(false);
     const [cameraReady, setCameraReady] = useState<boolean>();
     const [galleryItems, setGalleryItems] = useState<MediaLibrary.Asset[]>([]);
     const [type, setType] = useState<CameraType>(
         CameraView.Constants.Type.front
     );
+    const [isFocused, setIsFocused] = useState<boolean>(true);
     const [flashMode, setFlashMode] = useState(
         CameraView.Constants.FlashMode.auto
     );
@@ -45,7 +49,7 @@ const Camera: React.FC<CameraProps> = ({}) => {
     const dispatch = useDispatch();
     const count = useSelector((state: RootState) => state.counter);
 
-    const camera = useRef<CameraView | any>(null);
+    const camera = useRef<any>(null);
 
     const navigate = useNavigate();
     const boxRef = useRef<IBoxProps>(null);
@@ -66,10 +70,58 @@ const Camera: React.FC<CameraProps> = ({}) => {
             setFlashMode(CameraView.Constants.FlashMode.off);
     };
 
+    const openImagePickerAsync = async () => {
+        let permissionResult =
+            await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+        if (permissionResult.granted === false) {
+            alert('Permission to access camera roll is required!');
+            return;
+        }
+
+        setIsFocused(false);
+        let pickerResult = await ImagePicker.launchImageLibraryAsync();
+        console.log('trying to set image');
+        if (pickerResult.cancelled) {
+        } else {
+            if (mode == 'instruction') {
+                dispatch(setInstructionImage(pickerResult.uri));
+            } else if (mode == 'documentation') {
+                dispatch(setDocumentationImage(pickerResult.uri));
+            }
+            navigate('/');
+            setIsFocused(true);
+        }
+        setIsFocused(true);
+    };
+
+    const pickFromGallery = async () => {
+        const result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            aspect: [16, 9],
+            quality: 1,
+        });
+        console.log(result);
+    };
+
     useEffect(() => {
         (async () => {
-            const { status } = await CameraView.requestCameraPermissionsAsync();
-            setHasPermission(status === 'granted');
+            console.log('yoo');
+            const { granted } =
+                await CameraView.requestCameraPermissionsAsync();
+            if (Platform.OS !== 'web') {
+                /*const { granted } =
+                    await MediaLibrary.requestPermissionsAsync();
+                console.log("granted);*/
+
+                let permissionResult =
+                    await ImagePicker.requestMediaLibraryPermissionsAsync();
+                console.log('iamge picker permissions: ' + permissionResult);
+            }
+
+            setHasPermission(granted);
+            if (!granted) navigate('/');
 
             const galleryStatus =
                 await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -129,15 +181,6 @@ const Camera: React.FC<CameraProps> = ({}) => {
         navigate('/');
     };
 
-    const pickFromGallery = async () => {
-        const result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            allowsEditing: true,
-            aspect: [16, 9],
-            quality: 1,
-        });
-    };
-
     const getWidth = (): number => {
         if (boxRef.current) {
             return boxRef.current.width as number;
@@ -147,212 +190,269 @@ const Camera: React.FC<CameraProps> = ({}) => {
 
     return (
         <>
-            <Center width={'100%'} h={'full'} safeArea>
-                <Box
-                    testID='wrapper'
-                    w={'full'}
-                    maxW='420'
-                    h='full'
+            {isFocused && (
+                <Center
+                    width={'100%'}
+                    h={'full'}
+                    safeArea
                     backgroundColor={'black'}
-                    flexDirection={'column'}
-                    ref={boxRef}
                 >
                     <Box
-                        testID='header'
-                        height={'60px'}
-                        flexDirection={'row'}
-                        justifyContent={'space-between'}
-                    >
-                        <Pressable
-                            testID='backArrow'
-                            onPress={() => {
-                                navigate('/');
-                            }}
-                        >
-                            <Box
-                                ml={3}
-                                mt={2}
-                                justifyContent={'center'}
-                                alignContent={'center'}
-                            >
-                                <Ionicons
-                                    name='arrow-back-outline'
-                                    size={40}
-                                    color='white'
-                                />
-                            </Box>
-                        </Pressable>
-                        {Platform.OS !== 'web' &&
-                            type === CameraView.Constants.Type.back && (
-                                <Pressable testID='light' onPress={toggleFlash}>
-                                    <Box
-                                        mr={3}
-                                        mt={2}
-                                        justifyContent='center'
-                                        alignContent={'center'}
-                                    >
-                                        <Ionicons
-                                            name={
-                                                flashMode ===
-                                                CameraView.Constants.FlashMode
-                                                    .off
-                                                    ? 'ios-flash'
-                                                    : 'ios-flash-off'
-                                            }
-                                            color='white'
-                                            size={40}
-                                        />
-                                    </Box>
-                                </Pressable>
-                            )}
-                    </Box>
-                    <Box testID='camera' flex={1}>
-                        <ImageBackground
-                            source={{uri: count.instructionImageUri}}
-                            style={{width: '100%', height: '100%'}}
-                        >
-                            <CameraView
-                                ratio='4:3'
-                                ref={camera}
-                                style={{
-                                    aspectRatio: 1 / (4 / 3),
-                                    width: getWidth(),
-                                    height: getWidth(),
-                                    // aspectRatio: 1 / (4 / 3),
-                                    // width: getWidth(),
-                                    // height: getWidth() * 1.333
-                                    // opacity:
-                                    //     mode == 'instruction' &&
-                                    //     count.documentationImageUri
-                                    //         ? 0.7
-                                    //         : 1,
-                                }}
-                                onCameraReady={() => setCameraReady(true)}
-                                type={type}
-                                flashMode={flashMode}
-                            ></CameraView>
-                        </ImageBackground>
-                    </Box>
-                    <Box
-                        testID='footer'
-                        height={'144px'}
-                        backgroundColor={'black'}
+                        testID='wrapper'
+                        w={'full'}
+                        maxW='420'
+                        h='full'
+                        flexDirection={'column'}
+                        ref={boxRef}
                     >
                         <Box
-                            testID='mediaType'
-                            height={'34px'}
+                            testID='header'
+                            height={'60px'}
                             flexDirection={'row'}
-                            justifyContent={'space-evenly'}
+                            justifyContent={'space-between'}
                         >
-                            <Box
-                                testID='photo'
-                                flexDirection={'row'}
-                                style={{alignItems: 'center'}}
-                            >
-                                <Ionicons
-                                    name='image-outline'
-                                    size={20}
-                                    color='white'
-                                />
-                                <Text style={{ color: 'white', marginLeft: 5 }}>
-                                    {mode?.toLocaleUpperCase()}
-                                </Text>
-                            </Box>
-                        </Box>
-                        <Box
-                            testID='mediaType'
-                            height={'86px'}
-                            flexDirection='row'
-                            justifyContent={'space-evenly'}
-                            alignItems={'center'}
-                        >
-                            <Box
-                                testID='file'
-                                h={'42px'}
-                                w={'42px'}
-                                {...boxAlignCenter}
-                                {...boxBorderRadius}
-                                backgroundColor={'danger.900'}
-                            >
-                                {/* "#262626"  */}
-                                <Pressable
-                                    onPress={() => {
-                                        console.log(
-                                            'File system/ gallery not implemented'
-                                        );
-                                    }}
-                                >
-                                    <FontAwesome
-                                        name='folder-o'
-                                        size={20}
-                                        color='white'
-                                    />
-                                </Pressable>
-                            </Box>
-                            <Box
-                                testID='record'
-                                height={'86px'}
-                                width={'86px'}
-                                {...boxAlignCenter}
-                                {...boxBorderRadius}
+                            <Pressable
+                                testID='arrowBack'
+                                onPress={() => {
+                                    navigate('/');
+                                }}
                             >
                                 <Box
-                                    testID='recordButton'
-                                    height={'62px'}
-                                    width={'62px'}
-                                    {...boxAlignCenter}
-                                    {...boxBorderRadius}
-                                    borderColor='white'
-                                >
-                                    <Box
-                                        testID='icon'
-                                        {...boxAlignCenter}
-                                        backgroundColor={'#FF385C'}
-                                        borderRadius={1000}
-                                        borderWidth={1}
-                                        p={2}
-                                    >
-                                        <Pressable
-                                            disabled={!cameraReady}
-                                            onPress={() => takePicture()}
-                                        >
-                                            <Ionicons
-                                                name={
-                                                    recording
-                                                        ? 'stop'
-                                                        : 'image-outline'
-                                                }
-                                                size={24}
-                                                color={
-                                                    cameraReady
-                                                        ? 'white'
-                                                        : 'black'
-                                                }
-                                            />
-                                        </Pressable>
-                                    </Box>
-                                </Box>
-                            </Box>
-                            <Pressable onPress={() => rotateCamera()}>
-                                <Box
-                                    testID='flip'
-                                    h={'42px'}
-                                    w={'42px'}
-                                    {...boxAlignCenter}
-                                    {...boxBorderRadius}
-                                    backgroundColor={'#262626'}
+                                    ml={3}
+                                    mt={2}
+                                    justifyContent={'center'}
+                                    alignContent={'center'}
                                 >
                                     <Ionicons
-                                        name='camera-reverse-outline'
-                                        size={20}
+                                        name='arrow-back'
+                                        size={40}
                                         color='white'
                                     />
                                 </Box>
                             </Pressable>
+                            {Platform.OS !== 'android' && (
+                                <Pressable
+                                    testID='liveMode'
+                                    onPress={() => {
+                                        setLiveMode(!liveMode);
+                                    }}
+                                >
+                                    <Box
+                                        ml={3}
+                                        mt={2}
+                                        justifyContent={'center'}
+                                        alignContent={'center'}
+                                    >
+                                        <Ionicons
+                                            name='analytics-outline'
+                                            size={40}
+                                            color='white'
+                                        />
+                                    </Box>
+                                </Pressable>
+                            )}
+                            {Platform.OS !== 'web' &&
+                                type === CameraView.Constants.Type.back && (
+                                    <Pressable
+                                        testID='light'
+                                        onPress={toggleFlash}
+                                    >
+                                        <Box
+                                            mr={3}
+                                            mt={2}
+                                            justifyContent='center'
+                                            alignContent={'center'}
+                                        >
+                                            <Ionicons
+                                                name={
+                                                    flashMode ===
+                                                    CameraView.Constants
+                                                        .FlashMode.off
+                                                        ? 'ios-flash'
+                                                        : 'ios-flash-off'
+                                                }
+                                                color='white'
+                                                size={40}
+                                            />
+                                        </Box>
+                                    </Pressable>
+                                )}
+                        </Box>
+                        <Box testID='camera' flex={1}>
+                            {liveMode ? (
+                                <TensorCamera
+                                    cameraRef={camera}
+                                    width={getWidth()}
+                                    height={getWidth()}
+                                    type={type}
+                                    flashMode={flashMode}
+                                />
+                            ) : (
+                                <CameraView
+                                    ratio='4:3'
+                                    ref={camera}
+                                    style={{
+                                        aspectRatio: 1 / (4 / 3),
+                                        width: getWidth(),
+                                        height: getWidth(),
+                                        // aspectRatio: 1 / (4 / 3),
+                                        // width: getWidth(),
+                                        // height: getWidth() * 1.333
+                                        // opacity:
+                                        //     mode == 'instruction' &&
+                                        //     count.documentationImageUri
+                                        //         ? 0.7
+                                        //         : 1,
+                                    }}
+                                    onCameraReady={() => setCameraReady(true)}
+                                    type={type}
+                                    flashMode={flashMode}
+                                ></CameraView>
+                            )}
+                        </Box>
+                        <Box
+                            testID='footer'
+                            height={'144px'}
+                            backgroundColor={'black'}
+                        >
+                            <Box
+                                testID='mediaType'
+                                height={'34px'}
+                                flexDirection={'row'}
+                                justifyContent={'space-evenly'}
+                            >
+                                <Box
+                                    testID='photo'
+                                    flexDirection={'row'}
+                                    style={{ alignItems: 'center' }}
+                                >
+                                    <Ionicons
+                                        name='image-outline'
+                                        size={20}
+                                        color='white'
+                                    />
+                                    <Text
+                                        style={{
+                                            color: 'white',
+                                            marginLeft: 5,
+                                        }}
+                                    >
+                                        {mode?.toLocaleUpperCase()}
+                                    </Text>
+                                    <Text
+                                        style={{
+                                            color: 'white',
+                                            marginLeft: 5,
+                                        }}
+                                    >
+                                        {liveMode ? 'Live Mode' : null}
+                                    </Text>
+                                </Box>
+                            </Box>
+                            <Box
+                                testID='mediaType'
+                                height={'86px'}
+                                flexDirection='row'
+                                justifyContent={'space-evenly'}
+                                alignItems={'center'}
+                            >
+                                <Box
+                                    testID='file'
+                                    h={'42px'}
+                                    w={'42px'}
+                                    {...boxAlignCenter}
+                                    {...boxBorderRadius}
+                                    backgroundColor={'danger.900'}
+                                >
+                                    {/* "#262626"  */}
+                                    {Platform.OS !== 'web' && (
+                                        <Pressable
+                                            onPress={() => {
+                                                console.log(
+                                                    'File system/ gallery not implemented'
+                                                    /////////////////////////////////////////////////////////////////////////////////////////
+                                                );
+
+                                                openImagePickerAsync();
+                                                //pickFromGallery();
+                                                return;
+                                            }}
+                                        >
+                                            <FontAwesome
+                                                name='folder-o'
+                                                size={20}
+                                                color='white'
+                                            />
+                                        </Pressable>
+                                    )}
+                                </Box>
+                                <Box
+                                    testID='record'
+                                    height={'86px'}
+                                    width={'86px'}
+                                    {...boxAlignCenter}
+                                    {...boxBorderRadius}
+                                >
+                                    <Box
+                                        testID='recordButton'
+                                        height={'62px'}
+                                        width={'62px'}
+                                        {...boxAlignCenter}
+                                        {...boxBorderRadius}
+                                        borderColor='white'
+                                    >
+                                        <Box
+                                            testID='icon'
+                                            {...boxAlignCenter}
+                                            backgroundColor={'#FF385C'}
+                                            borderRadius={1000}
+                                            borderWidth={1}
+                                            p={2}
+                                        >
+                                            <Pressable
+                                                disabled={!cameraReady}
+                                                onPress={() => takePicture()}
+                                            >
+                                                <Ionicons
+                                                    name={
+                                                        recording
+                                                            ? 'stop'
+                                                            : 'image-outline'
+                                                    }
+                                                    size={24}
+                                                    color={
+                                                        cameraReady
+                                                            ? 'white'
+                                                            : 'black'
+                                                    }
+                                                />
+                                            </Pressable>
+                                        </Box>
+                                    </Box>
+                                </Box>
+                                {Platform.OS !== 'web' && (
+                                    <Pressable onPress={() => rotateCamera()}>
+                                        <Box
+                                            testID='flip'
+                                            h={'42px'}
+                                            w={'42px'}
+                                            {...boxAlignCenter}
+                                            {...boxBorderRadius}
+                                            backgroundColor={'#262626'}
+                                        >
+                                            <Ionicons
+                                                name='camera-reverse-outline'
+                                                size={20}
+                                                color='white'
+                                            />
+                                        </Box>
+                                    </Pressable>
+                                )}
+                            </Box>
                         </Box>
                     </Box>
-                </Box>
-            </Center>
+                </Center>
+            )}
         </>
     );
 };

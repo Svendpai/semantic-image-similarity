@@ -1,16 +1,27 @@
 import React, { useEffect } from 'react';
 import { RootState } from '../../Redux/store';
 import { useSelector, useDispatch } from 'react-redux';
-import { Box, Button, HStack, Text, View, VStack } from 'native-base';
+import {
+    Box,
+    Button,
+    HStack,
+    ScrollView,
+    Text,
+    View,
+    VStack,
+} from 'native-base';
 import { useNavigate } from 'react-router-native';
 import { useFonts } from 'expo-font';
-import { TouchableOpacity, Image } from 'react-native';
-import Simtest from '../../../Similarity';
+import { TouchableOpacity, Image, Platform } from 'react-native';
 
-interface HomeProps { }
+import TensorCamera from '../Camera/TensorCamera';
+import { getAllAlgorithms } from '../../Algorithms/similiarty-algorithms';
+
+interface HomeProps {}
 
 const Home: React.FC<HomeProps> = (props) => {
     const count = useSelector((state: RootState) => state.counter);
+
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
@@ -27,34 +38,49 @@ const Home: React.FC<HomeProps> = (props) => {
         );
     }
 
+    /*
+    //data_set: [img1, img2, label]
+data_set = []
+for i in range(n-classes)
+    for j in range(50):
+        #append true
+        data_set.append([dic[i][radnom between 0, n-elements/pr.class], dic[i][radnom between 0, n-elements/pr.class], 1)
+
+        #append false
+        data_set.append([dic[i][radnom between 0, n-elements/pr.class], dic[random between 0, n-classes][radnom between 0, n-elements/pr.class], 0)
+
+
+    */
+
     return (
-        <Box safeArea
+        <ScrollView
             style={{
                 width: '100%',
                 height: '100%',
                 backgroundColor: 'black',
                 flexDirection: 'column',
-                padding: 20
+                padding: 20,
             }}
         >
             <Box
+                safeAreaTop
                 style={{
-                    justifyContent: 'center',
+                    justifyContent: 'flex-end',
                     alignItems: 'center',
-                    height: 150,
+                    height: 100,
                 }}
             >
                 <Text
                     style={{
+                        height: 40,
                         fontFamily: 'Poppins-Bold',
                         color: 'white',
-                        fontSize: 30,
+                        fontSize: 20,
                     }}
                 >
                     {'Match Overlay'}
                 </Text>
             </Box>
-            <Simtest/>
             <HStack
                 style={{
                     justifyContent: 'space-between',
@@ -111,19 +137,28 @@ const Home: React.FC<HomeProps> = (props) => {
                                     fontSize={12}
                                     fontFamily={'Poppins-Medium'}
                                     color={'#d3d3d3'}
-                                > add </Text>
+                                >
+                                    {' '}
+                                    add{' '}
+                                </Text>
                                 <Text
                                     textAlign={'center'}
                                     fontSize={12}
                                     fontFamily={'Poppins-Bold'}
                                     color={'#d3d3d3'}
-                                > instruction </Text>
+                                >
+                                    {' '}
+                                    instruction{' '}
+                                </Text>
                                 <Text
                                     textAlign={'center'}
                                     fontSize={12}
                                     fontFamily={'Poppins-Medium'}
                                     color={'#d3d3d3'}
-                                > image </Text>
+                                >
+                                    {' '}
+                                    image{' '}
+                                </Text>
                             </Box>
                         )}
                     </Box>
@@ -153,7 +188,9 @@ const Home: React.FC<HomeProps> = (props) => {
                         </Text>
                         {count.documentationImageUri ? (
                             <Image
-                                source={{ uri: count.documentationImageUri }}
+                                source={{
+                                    uri: count.documentationImageUri,
+                                }}
                                 style={{
                                     width: 150,
                                     height: 200,
@@ -178,19 +215,28 @@ const Home: React.FC<HomeProps> = (props) => {
                                     fontSize={12}
                                     fontFamily={'Poppins-Medium'}
                                     color={'#d3d3d3'}
-                                > add </Text>
+                                >
+                                    {' '}
+                                    add{' '}
+                                </Text>
                                 <Text
                                     textAlign={'center'}
                                     fontSize={12}
                                     fontFamily={'Poppins-Bold'}
                                     color={'#d3d3d3'}
-                                > documentation </Text>
+                                >
+                                    {' '}
+                                    documentation{' '}
+                                </Text>
                                 <Text
                                     textAlign={'center'}
                                     fontSize={12}
                                     fontFamily={'Poppins-Medium'}
                                     color={'#d3d3d3'}
-                                > image </Text>
+                                >
+                                    {' '}
+                                    image{' '}
+                                </Text>
                             </Box>
                         )}
                     </Box>
@@ -209,38 +255,97 @@ const Home: React.FC<HomeProps> = (props) => {
                         {'Score'}
                     </Text>
                 </Box>
-                {['pHash', 'Siamese Neural Net', 'Distilled Siamese Net'].map(
-                    (name, index) => {
-                        return (
-                            <Box
-                                key={index}
+                {count.algorithms.map((algorithm, index) => {
+                    return (
+                        <Box
+                            key={index}
+                            style={{
+                                width: '100%',
+                                height: 120,
+                                borderRadius: 10,
+                                padding: 10,
+                                backgroundColor: '#404040',
+                                marginBottom: 10,
+                            }}
+                        >
+                            <Text
                                 style={{
-                                    width: '100%',
-                                    height: 120,
-                                    borderRadius: 10,
-                                    padding: 10,
-                                    backgroundColor: '#404040',
-                                    marginBottom: 10,
+                                    fontFamily: 'Poppins-Bold',
+                                    color: 'white',
+                                    fontSize: 12,
                                 }}
                             >
+                                {' '}
+                                {algorithm.displayName}
+                            </Text>
+
+                            {count.documentationImageUri &&
+                            count.instructionImageUri ? (
+                                <>
+                                    {algorithm.isCalculating ? (
+                                        <>
+                                            <Text
+                                                style={{
+                                                    fontFamily: 'Poppins-Bold',
+                                                    color: 'white',
+                                                    fontSize: 10,
+                                                }}
+                                            >
+                                                {' '}
+                                                {'Calculating...'}
+                                            </Text>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Text
+                                                style={{
+                                                    fontFamily: 'Poppins-Bold',
+                                                    color: 'white',
+                                                    fontSize: 10,
+                                                }}
+                                            >
+                                                {' '}
+                                                {'Similarity: ' +
+                                                    algorithm
+                                                        .latestSimilarityResponse
+                                                        ?.similarity}
+                                            </Text>
+                                            <Text
+                                                style={{
+                                                    fontFamily: 'Poppins-Bold',
+                                                    color: 'white',
+                                                    fontSize: 10,
+                                                }}
+                                            >
+                                                {' '}
+                                                {'Response Time (millis): ' +
+                                                    algorithm
+                                                        .latestSimilarityResponse
+                                                        ?.responseTimeInMillis}
+                                            </Text>
+                                        </>
+                                    )}
+                                </>
+                            ) : (
                                 <Text
                                     style={{
                                         fontFamily: 'Poppins-Bold',
                                         color: 'white',
-                                        fontSize: 12,
+                                        fontSize: 10,
                                     }}
                                 >
-                                    {' '}
-                                    {name}
+                                    {
+                                        "You haven't uploaded both images yet.. \n Upload images to get started!"
+                                    }
                                 </Text>
-                            </Box>
-                        );
-                    }
-                )}
+                            )}
+                        </Box>
+                    );
+                })}
 
                 <Box></Box>
             </VStack>
-        </Box>
+        </ScrollView>
     );
 };
 export default Home;
