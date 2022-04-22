@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { RootState } from '../../Redux/store';
 import { useSelector, useDispatch } from 'react-redux';
 import {
@@ -15,7 +15,11 @@ import { useFonts } from 'expo-font';
 import { TouchableOpacity, Image, Platform } from 'react-native';
 
 import TensorCamera from '../Camera/TensorCamera';
-import { getAllAlgorithms } from '../../Algorithms/similiarty-algorithms';
+import {
+    getAllAlgorithms,
+    SimilarityAlgorithm,
+} from '../../Algorithms/similiarty-algorithms';
+import { updateLatestSimilarityResponse } from '../../Redux/Slices/templateSlice';
 
 interface HomeProps {}
 
@@ -30,6 +34,49 @@ const Home: React.FC<HomeProps> = (props) => {
         'Poppins-Regular': require('../../../assets/fonts/Poppins-Regular.ttf'),
         'Poppins-Bold': require('../../../assets/fonts/Poppins-Bold.ttf'),
     });
+
+    const activateAlgorithm = (
+        algorithm: SimilarityAlgorithm,
+        index: number
+    ) => {
+        console.log(
+            'Activating algorithm: ',
+            algorithm.algorithmData.displayName
+        );
+        algorithm
+            .calculateSimilarity(
+                count.documentationImageUri,
+                count.instructionImageUri
+            )
+            .then((response) => {
+                dispatch(
+                    updateLatestSimilarityResponse({
+                        algorithmIndex: index,
+                        responseTimeInMillis: response.responseTimeInMillis,
+                        similarity: response.similarity,
+                    })
+                );
+            });
+    };
+
+    useEffect(() => {
+        if (count.documentationImageUri && count.instructionImageUri) {
+            getAllAlgorithms().forEach((algorithm, index) => {
+                if (algorithm.algorithmData.modelLoaded) {
+                    activateAlgorithm(algorithm, index);
+                } else {
+                    console.log(
+                        'loading model for algorithm: ',
+                        algorithm.algorithmData.displayName
+                    );
+                    algorithm.loadModel().then(() => {
+                        activateAlgorithm(algorithm, index);
+                    });
+                }
+            });
+        }
+    }, [count.documentationImageUri, count.instructionImageUri]);
+
     if (!fontsLoaded) {
         return (
             <View>
@@ -37,20 +84,6 @@ const Home: React.FC<HomeProps> = (props) => {
             </View>
         );
     }
-
-    /*
-    //data_set: [img1, img2, label]
-data_set = []
-for i in range(n-classes)
-    for j in range(50):
-        #append true
-        data_set.append([dic[i][radnom between 0, n-elements/pr.class], dic[i][radnom between 0, n-elements/pr.class], 1)
-
-        #append false
-        data_set.append([dic[i][radnom between 0, n-elements/pr.class], dic[random between 0, n-classes][radnom between 0, n-elements/pr.class], 0)
-
-
-    */
 
     return (
         <ScrollView
@@ -166,7 +199,6 @@ for i in range(n-classes)
 
                 <TouchableOpacity
                     onPress={() => {
-                        console.log('pressed documentation image');
                         navigate('/camera/documentation');
                     }}
                 >
@@ -255,7 +287,7 @@ for i in range(n-classes)
                         {'Score'}
                     </Text>
                 </Box>
-                {count.algorithms.map((algorithm, index) => {
+                {count.algorithmData.map((algorithm, index) => {
                     return (
                         <Box
                             key={index}

@@ -4,11 +4,14 @@ import {
 } from '../similiarty-algorithms';
 
 const FakeAlgorithm: SimilarityAlgorithm = {
-    isCalculating: false,
-    latestSimilarityResponse: null,
-    displayName: 'Fake Algorithm',
+    algorithmData: {
+        isCalculating: false,
+        latestSimilarityResponse: null,
+        displayName: 'Fake Algorithm',
+        modelLoaded: true,
+    },
     calculateSimilarity: async (image1: any, image2: any) => {
-        FakeAlgorithm.isCalculating = true;
+        FakeAlgorithm.algorithmData.isCalculating = true;
         const simResponse: SimilarityResponse = await new Promise(
             (resolve, reject) => {
                 const millis = Math.floor(Math.random() * 1000);
@@ -20,10 +23,17 @@ const FakeAlgorithm: SimilarityAlgorithm = {
                 }, millis);
             }
         );
-        FakeAlgorithm.isCalculating = false;
-
-        FakeAlgorithm.latestSimilarityResponse = simResponse;
+        FakeAlgorithm.algorithmData.isCalculating = false;
         return simResponse;
+    },
+    loadModel: async () => {
+        return new Promise((resolve, reject) => {
+            const millis = Math.floor(Math.random() * 2000 + 1000);
+            setTimeout(() => {
+                resolve(true);
+                FakeAlgorithm.algorithmData.modelLoaded = true;
+            }, millis);
+        });
     },
 };
 

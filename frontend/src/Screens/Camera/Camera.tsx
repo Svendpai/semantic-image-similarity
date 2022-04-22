@@ -81,7 +81,7 @@ const Camera: React.FC<CameraProps> = ({}) => {
 
         setIsFocused(false);
         let pickerResult = await ImagePicker.launchImageLibraryAsync();
-        console.log('trying to set image');
+
         if (pickerResult.cancelled) {
         } else {
             if (mode == 'instruction') {
@@ -102,22 +102,15 @@ const Camera: React.FC<CameraProps> = ({}) => {
             aspect: [16, 9],
             quality: 1,
         });
-        console.log(result);
     };
 
     useEffect(() => {
         (async () => {
-            console.log('yoo');
             const { granted } =
                 await CameraView.requestCameraPermissionsAsync();
             if (Platform.OS !== 'web') {
-                /*const { granted } =
-                    await MediaLibrary.requestPermissionsAsync();
-                console.log("granted);*/
-
                 let permissionResult =
                     await ImagePicker.requestMediaLibraryPermissionsAsync();
-                console.log('iamge picker permissions: ' + permissionResult);
             }
 
             setHasPermission(granted);
@@ -172,7 +165,7 @@ const Camera: React.FC<CameraProps> = ({}) => {
 
     const takePicture = async () => {
         const picture = await camera.current.takePictureAsync();
-        console.log(mode);
+
         if (mode == 'instruction') {
             dispatch(setInstructionImage(picture.uri));
         } else if (mode == 'documentation') {
@@ -368,11 +361,6 @@ const Camera: React.FC<CameraProps> = ({}) => {
                                     {Platform.OS !== 'web' && (
                                         <Pressable
                                             onPress={() => {
-                                                console.log(
-                                                    'File system/ gallery not implemented'
-                                                    /////////////////////////////////////////////////////////////////////////////////////////
-                                                );
-
                                                 openImagePickerAsync();
                                                 //pickFromGallery();
                                                 return;
