@@ -12,10 +12,13 @@ import {
     cameraWithTensors,
 } from '@tensorflow/tfjs-react-native';
 import { View, Text, Image } from 'react-native';
+import { manipulateAsync, ActionResize } from 'expo-image-manipulator';
 
 async function decodeImage(img: any): Promise<tf.Tensor3D> {
-    const imageAssetPath = Image.resolveAssetSource(img);
-    const response = await fetch(imageAssetPath.uri, {}, { isBinary: true });
+    console.log(img);
+    //const imageAssetPath = Image.resolveAssetSource(img.uri);
+
+    const response = await fetch(img.uri, {}, { isBinary: true });
     const imageDataArrayBuffer = await response.arrayBuffer();
     const imageData = new Uint8Array(imageDataArrayBuffer);
     return decodeJpeg(imageData);
@@ -30,6 +33,7 @@ async function loadModel() {
         bundleResourceIO(modelJSON, modelWeights)
     );
     model.summary();
+    return model;
 }
 
 const SiameseDemoAlgorithm: SimilarityAlgorithm = {
@@ -43,16 +47,25 @@ const SiameseDemoAlgorithm: SimilarityAlgorithm = {
     calculateSimilarity: async (image1: any, image2: any) => {
         const model: tf.LayersModel | undefined =
             SiameseDemoAlgorithm.algorithmData.model;
+
+        const resizedImage1 = await manipulateAsync(image1, [
+            { resize: { width: 160, height: 160 } },
+        ]);
+        const resizedImage2 = await manipulateAsync(image2, [
+            { resize: { width: 160, height: 160 } },
+        ]);
         if (model) {
             SiameseDemoAlgorithm.algorithmData.isCalculating = true;
-            const prediction = model.predict([
-                (await decodeImage(image1)).expandDims(),
-                (await decodeImage(image2)).expandDims(),
+            console.log('trying to predict');
+            const prediction: any = model.predict([
+                (await decodeImage(resizedImage1)).expandDims(),
+                (await decodeImage(resizedImage2)).expandDims(),
             ]);
 
             console.log('PREDICTION:');
-            const realPrediction = (prediction as Tensor).dataSync();
-            console.log(realPrediction.indexOf(Math.max(...realPrediction)));
+            const image1Features = prediction[0]; //(prediction as Tensor).arraySync();
+            const image2Features = prediction[1]; //(prediction as Tensor).arraySync();'
+
             SiameseDemoAlgorithm.algorithmData.isCalculating = false;
             return { responseTimeInMillis: 1000, similarity: 1 }; //realPrediction;
         } else {
