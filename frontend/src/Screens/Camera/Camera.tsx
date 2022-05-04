@@ -69,7 +69,7 @@ const Camera: React.FC<CameraProps> = ({}) => {
         if (Platform.OS !== 'web')
             setFlashMode(CameraView.Constants.FlashMode.off);
     };
-
+    const [isFocused, setIsFocused] = useState<boolean>(true);
     const openImagePickerAsync = async () => {
         let permissionResult =
             await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -93,15 +93,6 @@ const Camera: React.FC<CameraProps> = ({}) => {
             setIsFocused(true);
         }
         setIsFocused(true);
-    };
-
-    const pickFromGallery = async () => {
-        const result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            allowsEditing: true,
-            aspect: [16, 9],
-            quality: 1,
-        });
     };
 
     useEffect(() => {

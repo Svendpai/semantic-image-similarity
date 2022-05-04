@@ -48,6 +48,31 @@ export const counterSlice = createSlice({
                 responseTimeInMillis: action.payload.responseTimeInMillis,
             };
         },
+        setModelLoaded: (
+            state,
+            action: PayloadAction<{ algorithmIndex: number; isLoaded: boolean }>
+        ) => {
+            state.algorithmData[action.payload.algorithmIndex].modelLoaded =
+                action.payload.isLoaded;
+        },
+        setModel: (
+            state,
+            action: PayloadAction<{ algorithmIndex: number; model: boolean }>
+        ) => {
+            state.algorithmData[action.payload.algorithmIndex].model =
+                action.payload.model;
+        },
+
+        setModelIsLoading: (
+            state,
+            action: PayloadAction<{
+                algorithmIndex: number;
+                isLoading: boolean;
+            }>
+        ) => {
+            state.algorithmData[action.payload.algorithmIndex].modelLoading =
+                action.payload.isLoading;
+        },
     },
 });
 
@@ -56,6 +81,9 @@ export const {
     setInstructionImage,
     setDocumentationImage,
     updateLatestSimilarityResponse,
+    setModelLoaded,
+    setModelIsLoading,
+    setModel,
 } = counterSlice.actions;
 
 export default counterSlice.reducer;

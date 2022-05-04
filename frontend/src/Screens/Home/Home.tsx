@@ -19,63 +19,36 @@ import {
     getAllAlgorithms,
     SimilarityAlgorithm,
 } from '../../Algorithms/similiarty-algorithms';
-import { updateLatestSimilarityResponse } from '../../Redux/Slices/templateSlice';
+import {
+    setModel,
+    setModelIsLoading,
+    setModelLoaded,
+    updateLatestSimilarityResponse,
+} from '../../Redux/Slices/templateSlice';
+import { SimilarityAlgorithmComponent } from './SimilarityAlgorithmComponent';
+import { ModelData } from '../../../App';
 
-interface HomeProps {}
+interface HomeProps {
+    models: ModelData[];
+}
 
-const Home: React.FC<HomeProps> = (props) => {
+const Home: React.FC<HomeProps> = ({ models }) => {
     const count = useSelector((state: RootState) => state.counter);
 
-    const dispatch = useDispatch();
     const navigate = useNavigate();
+
+    const getModelByIndex = (index: number) => {
+        models.forEach((model) => console.log(model.index));
+        const model = models.find((model) => model.index == index);
+
+        return model;
+    };
 
     let [fontsLoaded] = useFonts({
         'Poppins-Medium': require('../../../assets/fonts/Poppins-Medium.ttf'),
         'Poppins-Regular': require('../../../assets/fonts/Poppins-Regular.ttf'),
         'Poppins-Bold': require('../../../assets/fonts/Poppins-Bold.ttf'),
     });
-
-    const activateAlgorithm = (
-        algorithm: SimilarityAlgorithm,
-        index: number
-    ) => {
-        console.log(
-            'Activating algorithm: ',
-            algorithm.algorithmData.displayName
-        );
-        algorithm
-            .calculateSimilarity(
-                count.documentationImageUri,
-                count.instructionImageUri
-            )
-            .then((response) => {
-                dispatch(
-                    updateLatestSimilarityResponse({
-                        algorithmIndex: index,
-                        responseTimeInMillis: response.responseTimeInMillis,
-                        similarity: response.similarity,
-                    })
-                );
-            });
-    };
-
-    useEffect(() => {
-        if (count.documentationImageUri && count.instructionImageUri) {
-            getAllAlgorithms().forEach((algorithm, index) => {
-                if (algorithm.algorithmData.modelLoaded) {
-                    activateAlgorithm(algorithm, index);
-                } else {
-                    console.log(
-                        'loading model for algorithm: ',
-                        algorithm.algorithmData.displayName
-                    );
-                    algorithm.loadModel().then(() => {
-                        activateAlgorithm(algorithm, index);
-                    });
-                }
-            });
-        }
-    }, [count.documentationImageUri, count.instructionImageUri]);
 
     if (!fontsLoaded) {
         return (
@@ -123,6 +96,7 @@ const Home: React.FC<HomeProps> = (props) => {
                 }}
             >
                 <TouchableOpacity
+                    style={{ width: '50%' }}
                     onPress={() => {
                         navigate('/camera/instruction');
                     }}
@@ -130,7 +104,7 @@ const Home: React.FC<HomeProps> = (props) => {
                     <Box
                         style={{
                             height: 'auto',
-                            width: 150,
+                            width: '100%',
                             alignItems: 'center',
                         }}
                     >
@@ -147,8 +121,8 @@ const Home: React.FC<HomeProps> = (props) => {
                             <Image
                                 source={{ uri: count.instructionImageUri }}
                                 style={{
-                                    width: 150,
-                                    height: 200,
+                                    width: '90%',
+                                    height: 180,
                                     borderRadius: 10,
                                 }}
                             />
@@ -159,7 +133,7 @@ const Home: React.FC<HomeProps> = (props) => {
                                     borderColor: 'white',
                                     borderRadius: 10,
                                     height: 200,
-                                    width: '100%',
+                                    width: '90%',
                                     alignItems: 'center',
                                     justifyContent: 'center',
                                     borderStyle: 'dashed',
@@ -198,6 +172,7 @@ const Home: React.FC<HomeProps> = (props) => {
                 </TouchableOpacity>
 
                 <TouchableOpacity
+                    style={{ width: '50%' }}
                     onPress={() => {
                         navigate('/camera/documentation');
                     }}
@@ -205,7 +180,7 @@ const Home: React.FC<HomeProps> = (props) => {
                     <Box
                         style={{
                             height: 'auto',
-                            width: 150,
+                            width: '100%',
                             alignItems: 'center',
                         }}
                     >
@@ -224,8 +199,8 @@ const Home: React.FC<HomeProps> = (props) => {
                                     uri: count.documentationImageUri,
                                 }}
                                 style={{
-                                    width: 150,
-                                    height: 200,
+                                    width: '90%',
+                                    height: 180,
                                     borderRadius: 10,
                                 }}
                             />
@@ -235,8 +210,8 @@ const Home: React.FC<HomeProps> = (props) => {
                                     borderWidth: 1,
                                     borderColor: '#d3d3d3',
                                     borderRadius: 10,
-                                    height: 200,
-                                    width: '100%',
+                                    height: 180,
+                                    width: '90%',
                                     alignItems: 'center',
                                     justifyContent: 'center',
                                     borderStyle: 'dashed',
@@ -287,91 +262,18 @@ const Home: React.FC<HomeProps> = (props) => {
                         {'Score'}
                     </Text>
                 </Box>
-                {count.algorithmData.map((algorithm, index) => {
+                {getAllAlgorithms().map((algorithm, index) => {
                     return (
-                        <Box
-                            key={index}
-                            style={{
-                                width: '100%',
-                                height: 120,
-                                borderRadius: 10,
-                                padding: 10,
-                                backgroundColor: '#404040',
-                                marginBottom: 10,
-                            }}
+                        <React.Fragment
+                            key={algorithm.algorithmData.displayName}
                         >
-                            <Text
-                                style={{
-                                    fontFamily: 'Poppins-Bold',
-                                    color: 'white',
-                                    fontSize: 12,
-                                }}
-                            >
-                                {' '}
-                                {algorithm.displayName}
-                            </Text>
-
-                            {count.documentationImageUri &&
-                            count.instructionImageUri ? (
-                                <>
-                                    {algorithm.isCalculating ? (
-                                        <>
-                                            <Text
-                                                style={{
-                                                    fontFamily: 'Poppins-Bold',
-                                                    color: 'white',
-                                                    fontSize: 10,
-                                                }}
-                                            >
-                                                {' '}
-                                                {'Calculating...'}
-                                            </Text>
-                                        </>
-                                    ) : (
-                                        <>
-                                            <Text
-                                                style={{
-                                                    fontFamily: 'Poppins-Bold',
-                                                    color: 'white',
-                                                    fontSize: 10,
-                                                }}
-                                            >
-                                                {' '}
-                                                {'Similarity: ' +
-                                                    algorithm
-                                                        .latestSimilarityResponse
-                                                        ?.similarity}
-                                            </Text>
-                                            <Text
-                                                style={{
-                                                    fontFamily: 'Poppins-Bold',
-                                                    color: 'white',
-                                                    fontSize: 10,
-                                                }}
-                                            >
-                                                {' '}
-                                                {'Response Time (millis): ' +
-                                                    algorithm
-                                                        .latestSimilarityResponse
-                                                        ?.responseTimeInMillis}
-                                            </Text>
-                                        </>
-                                    )}
-                                </>
-                            ) : (
-                                <Text
-                                    style={{
-                                        fontFamily: 'Poppins-Bold',
-                                        color: 'white',
-                                        fontSize: 10,
-                                    }}
-                                >
-                                    {
-                                        "You haven't uploaded both images yet.. \n Upload images to get started!"
-                                    }
-                                </Text>
-                            )}
-                        </Box>
+                            <SimilarityAlgorithmComponent
+                                model={getModelByIndex(index)}
+                                key={algorithm.algorithmData.displayName + '1'}
+                                algorithm={algorithm}
+                                index={index}
+                            />
+                        </React.Fragment>
                     );
                 })}
 

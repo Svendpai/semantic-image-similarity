@@ -12,15 +12,17 @@ export type SimilarityAlgorithmData = {
     isCalculating: boolean;
     modelLoaded?: boolean;
     model?: any;
+    modelLoading?: boolean;
 };
 
 export interface SimilarityAlgorithm {
     algorithmData: SimilarityAlgorithmData;
     calculateSimilarity: (
         image1: any,
-        image2: any
+        image2: any,
+        model?: any
     ) => Promise<SimilarityResponse>;
-    loadModel: () => Promise<boolean>;
+    loadModel: () => Promise<any>;
 }
 
 const similarityAlgorithms: SimilarityAlgorithm[] = [

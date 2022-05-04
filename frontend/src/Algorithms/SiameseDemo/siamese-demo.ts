@@ -13,6 +13,7 @@ import {
 } from '@tensorflow/tfjs-react-native';
 import { View, Text, Image } from 'react-native';
 import { manipulateAsync, ActionResize } from 'expo-image-manipulator';
+import { mode } from 'native-base/lib/typescript/theme/tools';
 
 async function decodeImage(img: any): Promise<tf.Tensor3D> {
     console.log(img);
@@ -44,9 +45,8 @@ const SiameseDemoAlgorithm: SimilarityAlgorithm = {
         modelLoaded: false,
         model: null,
     },
-    calculateSimilarity: async (image1: any, image2: any) => {
-        const model: tf.LayersModel | undefined =
-            SiameseDemoAlgorithm.algorithmData.model;
+    calculateSimilarity: async (image1: any, image2: any, model: any) => {
+        const timeStart = new Date().getTime();
 
         const resizedImage1 = await manipulateAsync(image1, [
             { resize: { width: 160, height: 160 } },
@@ -55,27 +55,48 @@ const SiameseDemoAlgorithm: SimilarityAlgorithm = {
             { resize: { width: 160, height: 160 } },
         ]);
         if (model) {
-            SiameseDemoAlgorithm.algorithmData.isCalculating = true;
             console.log('trying to predict');
+            let offset = tf.scalar(127.5);
             const prediction: any = model.predict([
-                (await decodeImage(resizedImage1)).expandDims(),
-                (await decodeImage(resizedImage2)).expandDims(),
+                (await decodeImage(resizedImage1))
+                    .sub(offset)
+                    .div(offset)
+                    .expandDims(),
+                (await decodeImage(resizedImage2))
+                    .sub(offset)
+                    .div(offset)
+                    .expandDims(),
             ]);
 
             console.log('PREDICTION:');
             const image1Features = prediction[0]; //(prediction as Tensor).arraySync();
             const image2Features = prediction[1]; //(prediction as Tensor).arraySync();'
 
-            SiameseDemoAlgorithm.algorithmData.isCalculating = false;
-            return { responseTimeInMillis: 1000, similarity: 1 }; //realPrediction;
+            console.log(image1Features.shape);
+            console.log(image2Features);
+
+            [siamese_model.predict(data))]
+
+            // calculate euclidean distance
+
+            const distance = tf.sqrt(
+                tf.sum(tf.squaredDifference(image1Features, image2Features))
+            );
+            console.log(distance.dataSync());
+            const timeEnd = new Date().getTime();
+
+            return {
+                responseTimeInMillis: timeEnd - timeStart,
+                similarity: distance.dataSync()[0],
+            };
         } else {
-            throw new Error('Model not loaded');
+            console.log('model not loaded');
+            return { responseTimeInMillis: 0, similarity: 0 };
         }
     },
     loadModel: async () => {
         const model = await loadModel();
-        SiameseDemoAlgorithm.algorithmData.model = model;
-        return true;
+        return model;
     },
 };
 

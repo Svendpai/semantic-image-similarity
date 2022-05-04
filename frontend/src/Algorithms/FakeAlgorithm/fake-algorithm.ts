@@ -30,7 +30,7 @@ const FakeAlgorithm: SimilarityAlgorithm = {
         return new Promise((resolve, reject) => {
             const millis = Math.floor(Math.random() * 2000 + 1000);
             setTimeout(() => {
-                resolve(true);
+                resolve({});
                 FakeAlgorithm.algorithmData.modelLoaded = true;
             }, millis);
         });
