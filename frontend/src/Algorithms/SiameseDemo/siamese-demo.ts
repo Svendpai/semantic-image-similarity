@@ -75,8 +75,6 @@ const SiameseDemoAlgorithm: SimilarityAlgorithm = {
             console.log(image1Features.shape);
             console.log(image2Features);
 
-            [siamese_model.predict(data))]
-
             // calculate euclidean distance
 
             const distance = tf.sqrt(
