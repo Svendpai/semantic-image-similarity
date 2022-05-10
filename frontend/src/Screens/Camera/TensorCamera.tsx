@@ -1,9 +1,9 @@
 import { Camera } from 'expo-camera';
-import { cameraWithTensors } from '@tensorflow/tfjs-react-native';
+//import { cameraWithTensors } from '@tensorflow/tfjs-react-native';
 import { View } from 'native-base';
 import { Platform } from 'react-native';
-import * as tf from '@tensorflow/tfjs';
-import { ExpoWebGLRenderingContext } from 'expo-gl';
+//import * as tf from '@tensorflow/tfjs';
+//import { ExpoWebGLRenderingContext } from 'expo-gl';
 import React, { useEffect, useRef, useState } from 'react';
 
 type Props = {
@@ -21,7 +21,8 @@ const Component: React.FC<Props> = ({
     type,
     flashMode,
 }) => {
-    const [tfReady, setTfReady] = useState<boolean>(false);
+    return <></>;
+    /*const [tfReady, setTfReady] = useState<boolean>(false);
 
     useEffect(() => {
         const bob = async () => {
@@ -69,6 +70,8 @@ const Component: React.FC<Props> = ({
     }
     const TensorCamera = cameraWithTensors(Camera);
 
+    
+
     return (
         //await tf.ready();
         // Currently expo does not support automatically determining the
@@ -112,6 +115,6 @@ const Component: React.FC<Props> = ({
                 </View>
             )}
         </>
-    );
+    );*/
 };
 export default Component;

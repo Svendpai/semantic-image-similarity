@@ -9,7 +9,6 @@ import {
     fetch,
     decodeJpeg,
     bundleResourceIO,
-    cameraWithTensors,
 } from '@tensorflow/tfjs-react-native';
 import { View, Text, Image } from 'react-native';
 import { manipulateAsync, ActionResize } from 'expo-image-manipulator';
@@ -26,15 +25,23 @@ async function decodeImage(img: any): Promise<tf.Tensor3D> {
 }
 
 async function loadModel() {
+    console.log('trying to get ready');
     await tf.ready();
-
+    //App break here ^^ when tf.ready is called
+    console.log('tf ready');
+    /*
     const modelJSON = require('./model.json');
     const modelWeights = require('./group1-shard1of1.bin');
+
+    console.log('loaded shards and json model');
     const model = await tf.loadLayersModel(
         bundleResourceIO(modelJSON, modelWeights)
     );
+
+    console.log('instatitaed layers model');
     model.summary();
-    return model;
+    return model;*/
+    return {};
 }
 
 const SiameseDemoAlgorithm: SimilarityAlgorithm = {

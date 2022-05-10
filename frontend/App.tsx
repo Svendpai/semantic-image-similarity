@@ -28,15 +28,21 @@ const useModels = ({ algorithms }: Use) => {
 
     const loadModels = async (algorithms: any) => {
         const modelList: any = [...models];
+
         for (let i = 0; i < algorithms.length; i++) {
             console.log(
                 'loading model for algorithm: ',
                 algorithms[i].algorithmData.displayName
             );
+            console.log('fainlly printed');
+
             if (!modelList.find((m: any) => m.index === i)) {
+                console.log('trying to load model');
+
                 const model = await algorithms[i].loadModel();
                 modelList.push({ index: i, model: model });
             }
+            console.log('not loading');
         }
 
         setModels(modelList);
@@ -52,14 +58,24 @@ const useModels = ({ algorithms }: Use) => {
 
 const App = (): JSX.Element => {
     const models = useModels({ algorithms: getAllAlgorithms() });
-    console.log(models.length);
+    //console.log(models.length);
 
     return (
         <Provider store={store}>
             <NativeBaseProvider>
                 <NativeRouter>
                     <Routes>
-                        <Route path='/' element={<Home models={models} />} />
+                        <Route
+                            path='/'
+                            element={
+                                <Home
+                                    models={
+                                        []
+                                        //models
+                                    }
+                                />
+                            }
+                        />
                         <Route path='/camera/:mode' element={<Camera />} />
                     </Routes>
                 </NativeRouter>

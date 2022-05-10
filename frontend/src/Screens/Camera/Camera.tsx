@@ -37,11 +37,11 @@ const Camera: React.FC<CameraProps> = ({}) => {
 
     const [recording, setRecording] = useState<boolean>(false);
     const [cameraReady, setCameraReady] = useState<boolean>();
-    const [galleryItems, setGalleryItems] = useState<MediaLibrary.Asset[]>([]);
+
     const [type, setType] = useState<CameraType>(
         CameraView.Constants.Type.front
     );
-    const [isFocused, setIsFocused] = useState<boolean>(true);
+
     const [flashMode, setFlashMode] = useState(
         CameraView.Constants.FlashMode.auto
     );
