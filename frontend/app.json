@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "frontend",
-    "slug": "frontend",
+    "name": "Image Similarity v3",
+    "slug": "image-similarity-v3",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -10,6 +10,7 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
+    "entryPoint": "./App.tsx",
     "updates": {
       "fallbackToCacheTimeout": 0
     },
@@ -43,6 +44,8 @@
       "expo-camera",
       "expo-media-library",
       "expo-image-picker"
-    ]
-  }
+    ],
+    "description": ""
+  },
+  "main": "./App.tsx"
 }

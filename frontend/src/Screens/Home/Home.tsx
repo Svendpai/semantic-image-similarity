@@ -1,24 +1,55 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { RootState } from '../../Redux/store';
 import { useSelector, useDispatch } from 'react-redux';
-import { Box, Button, HStack, Text, View, VStack } from 'native-base';
+import {
+    Box,
+    Button,
+    HStack,
+    ScrollView,
+    Text,
+    View,
+    VStack,
+} from 'native-base';
 import { useNavigate } from 'react-router-native';
 import { useFonts } from 'expo-font';
-import { TouchableOpacity, Image } from 'react-native';
-import Simtest from '../../../Similarity';
+import { TouchableOpacity, Image, Platform } from 'react-native';
 
-interface HomeProps { }
+import TensorCamera from '../Camera/TensorCamera';
+import {
+    getAllAlgorithms,
+    SimilarityAlgorithm,
+} from '../../Algorithms/similiarty-algorithms';
+import {
+    setModel,
+    setModelIsLoading,
+    setModelLoaded,
+    updateLatestSimilarityResponse,
+} from '../../Redux/Slices/templateSlice';
+import { SimilarityAlgorithmComponent } from './SimilarityAlgorithmComponent';
+import { ModelData } from '../../../App';
 
-const Home: React.FC<HomeProps> = (props) => {
+interface HomeProps {
+    models: ModelData[];
+}
+
+const Home: React.FC<HomeProps> = ({ models }) => {
     const count = useSelector((state: RootState) => state.counter);
-    const dispatch = useDispatch();
+
     const navigate = useNavigate();
+
+    const getModelByIndex = (index: number) => {
+        models.forEach((model) => console.log(model.index));
+        const model = models.find((model) => model.index == index);
+
+        return model;
+    };
 
     let [fontsLoaded] = useFonts({
         'Poppins-Medium': require('../../../assets/fonts/Poppins-Medium.ttf'),
         'Poppins-Regular': require('../../../assets/fonts/Poppins-Regular.ttf'),
         'Poppins-Bold': require('../../../assets/fonts/Poppins-Bold.ttf'),
     });
+
     if (!fontsLoaded) {
         return (
             <View>
@@ -28,33 +59,34 @@ const Home: React.FC<HomeProps> = (props) => {
     }
 
     return (
-        <Box safeArea
+        <ScrollView
             style={{
                 width: '100%',
                 height: '100%',
                 backgroundColor: 'black',
                 flexDirection: 'column',
-                padding: 20
+                padding: 20,
             }}
         >
             <Box
+                safeAreaTop
                 style={{
-                    justifyContent: 'center',
+                    justifyContent: 'flex-end',
                     alignItems: 'center',
-                    height: 150,
+                    height: 100,
                 }}
             >
                 <Text
                     style={{
+                        height: 40,
                         fontFamily: 'Poppins-Bold',
                         color: 'white',
-                        fontSize: 30,
+                        fontSize: 20,
                     }}
                 >
                     {'Match Overlay'}
                 </Text>
             </Box>
-            <Simtest/>
             <HStack
                 style={{
                     justifyContent: 'space-between',
@@ -64,6 +96,7 @@ const Home: React.FC<HomeProps> = (props) => {
                 }}
             >
                 <TouchableOpacity
+                    style={{ width: '50%' }}
                     onPress={() => {
                         navigate('/camera/instruction');
                     }}
@@ -71,7 +104,7 @@ const Home: React.FC<HomeProps> = (props) => {
                     <Box
                         style={{
                             height: 'auto',
-                            width: 150,
+                            width: '100%',
                             alignItems: 'center',
                         }}
                     >
@@ -88,8 +121,8 @@ const Home: React.FC<HomeProps> = (props) => {
                             <Image
                                 source={{ uri: count.instructionImageUri }}
                                 style={{
-                                    width: 150,
-                                    height: 200,
+                                    width: '90%',
+                                    height: 180,
                                     borderRadius: 10,
                                 }}
                             />
@@ -100,7 +133,7 @@ const Home: React.FC<HomeProps> = (props) => {
                                     borderColor: 'white',
                                     borderRadius: 10,
                                     height: 200,
-                                    width: '100%',
+                                    width: '90%',
                                     alignItems: 'center',
                                     justifyContent: 'center',
                                     borderStyle: 'dashed',
@@ -111,34 +144,43 @@ const Home: React.FC<HomeProps> = (props) => {
                                     fontSize={12}
                                     fontFamily={'Poppins-Medium'}
                                     color={'#d3d3d3'}
-                                > add </Text>
+                                >
+                                    {' '}
+                                    add{' '}
+                                </Text>
                                 <Text
                                     textAlign={'center'}
                                     fontSize={12}
                                     fontFamily={'Poppins-Bold'}
                                     color={'#d3d3d3'}
-                                > instruction </Text>
+                                >
+                                    {' '}
+                                    instruction{' '}
+                                </Text>
                                 <Text
                                     textAlign={'center'}
                                     fontSize={12}
                                     fontFamily={'Poppins-Medium'}
                                     color={'#d3d3d3'}
-                                > image </Text>
+                                >
+                                    {' '}
+                                    image{' '}
+                                </Text>
                             </Box>
                         )}
                     </Box>
                 </TouchableOpacity>
 
                 <TouchableOpacity
+                    style={{ width: '50%' }}
                     onPress={() => {
-                        console.log('pressed documentation image');
                         navigate('/camera/documentation');
                     }}
                 >
                     <Box
                         style={{
                             height: 'auto',
-                            width: 150,
+                            width: '100%',
                             alignItems: 'center',
                         }}
                     >
@@ -153,10 +195,12 @@ const Home: React.FC<HomeProps> = (props) => {
                         </Text>
                         {count.documentationImageUri ? (
                             <Image
-                                source={{ uri: count.documentationImageUri }}
+                                source={{
+                                    uri: count.documentationImageUri,
+                                }}
                                 style={{
-                                    width: 150,
-                                    height: 200,
+                                    width: '90%',
+                                    height: 180,
                                     borderRadius: 10,
                                 }}
                             />
@@ -166,8 +210,8 @@ const Home: React.FC<HomeProps> = (props) => {
                                     borderWidth: 1,
                                     borderColor: '#d3d3d3',
                                     borderRadius: 10,
-                                    height: 200,
-                                    width: '100%',
+                                    height: 180,
+                                    width: '90%',
                                     alignItems: 'center',
                                     justifyContent: 'center',
                                     borderStyle: 'dashed',
@@ -178,19 +222,28 @@ const Home: React.FC<HomeProps> = (props) => {
                                     fontSize={12}
                                     fontFamily={'Poppins-Medium'}
                                     color={'#d3d3d3'}
-                                > add </Text>
+                                >
+                                    {' '}
+                                    add{' '}
+                                </Text>
                                 <Text
                                     textAlign={'center'}
                                     fontSize={12}
                                     fontFamily={'Poppins-Bold'}
                                     color={'#d3d3d3'}
-                                > documentation </Text>
+                                >
+                                    {' '}
+                                    documentation{' '}
+                                </Text>
                                 <Text
                                     textAlign={'center'}
                                     fontSize={12}
                                     fontFamily={'Poppins-Medium'}
                                     color={'#d3d3d3'}
-                                > image </Text>
+                                >
+                                    {' '}
+                                    image{' '}
+                                </Text>
                             </Box>
                         )}
                     </Box>
@@ -209,38 +262,24 @@ const Home: React.FC<HomeProps> = (props) => {
                         {'Score'}
                     </Text>
                 </Box>
-                {['pHash', 'Siamese Neural Net', 'Distilled Siamese Net'].map(
-                    (name, index) => {
-                        return (
-                            <Box
-                                key={index}
-                                style={{
-                                    width: '100%',
-                                    height: 120,
-                                    borderRadius: 10,
-                                    padding: 10,
-                                    backgroundColor: '#404040',
-                                    marginBottom: 10,
-                                }}
-                            >
-                                <Text
-                                    style={{
-                                        fontFamily: 'Poppins-Bold',
-                                        color: 'white',
-                                        fontSize: 12,
-                                    }}
-                                >
-                                    {' '}
-                                    {name}
-                                </Text>
-                            </Box>
-                        );
-                    }
-                )}
+                {getAllAlgorithms().map((algorithm, index) => {
+                    return (
+                        <React.Fragment
+                            key={algorithm.algorithmData.displayName}
+                        >
+                            <SimilarityAlgorithmComponent
+                                model={getModelByIndex(index)}
+                                key={algorithm.algorithmData.displayName + '1'}
+                                algorithm={algorithm}
+                                index={index}
+                            />
+                        </React.Fragment>
+                    );
+                })}
 
                 <Box></Box>
             </VStack>
-        </Box>
+        </ScrollView>
     );
 };
 export default Home;
