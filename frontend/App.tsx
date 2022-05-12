@@ -5,6 +5,7 @@ import { NativeBaseProvider } from 'native-base';
 import Camera from './src/Screens/Camera/Camera';
 import Home from './src/Screens/Home/Home';
 import { useFonts } from 'expo-font';
+import { registerRootComponent } from 'expo';
 import React, { useEffect, useState } from 'react';
 import {
     getAllAlgorithms,
@@ -56,7 +57,7 @@ const useModels = ({ algorithms }: Use) => {
     return models;
 };
 
-const App = (): JSX.Element => {
+const App: React.FC = (): JSX.Element => {
     const models = useModels({ algorithms: getAllAlgorithms() });
     //console.log(models.length);
 
@@ -65,17 +66,7 @@ const App = (): JSX.Element => {
             <NativeBaseProvider>
                 <NativeRouter>
                     <Routes>
-                        <Route
-                            path='/'
-                            element={
-                                <Home
-                                    models={
-                                        []
-                                        //models
-                                    }
-                                />
-                            }
-                        />
+                        <Route path='/' element={<Home models={models} />} />
                         <Route path='/camera/:mode' element={<Camera />} />
                     </Routes>
                 </NativeRouter>
@@ -84,4 +75,4 @@ const App = (): JSX.Element => {
     );
 };
 
-export default App;
+export default registerRootComponent(App);

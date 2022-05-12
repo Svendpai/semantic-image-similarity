@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Image Similarity",
-    "slug": "image-similarity",
+    "name": "Image Similarity v3",
+    "slug": "image-similarity-v3",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -10,6 +10,7 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
+    "entryPoint": "./App.tsx",
     "updates": {
       "fallbackToCacheTimeout": 0
     },
@@ -45,5 +46,6 @@
       "expo-image-picker"
     ],
     "description": ""
-  }
+  },
+  "main": "./App.tsx"
 }
