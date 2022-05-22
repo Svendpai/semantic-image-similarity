@@ -6,7 +6,7 @@ export type SimilarityResponse = {
     responseTimeInMillis: number;
 };
 
-export type SimilarityAlgorithmData = {
+export type SimilarityCalculatorData = {
     displayName: string;
     latestSimilarityResponse: SimilarityResponse | null;
     isCalculating: boolean;
@@ -15,22 +15,22 @@ export type SimilarityAlgorithmData = {
     modelLoading?: boolean;
 };
 
-export interface SimilarityAlgorithm {
-    algorithmData: SimilarityAlgorithmData;
+export interface IImageSimilarityCalculator {
+    algorithmData: SimilarityCalculatorData;
     calculateSimilarity: (
         image1: any,
         image2: any,
         model?: any
     ) => Promise<SimilarityResponse>;
-    loadModel: () => Promise<any>;
+    loadCalculator: () => Promise<any>;
 }
 
-const similarityAlgorithms: SimilarityAlgorithm[] = [
+const similarityAlgorithms: IImageSimilarityCalculator[] = [
     //register your similarity algorithms here
     FakeAlgorithm,
     SiameseDemoAlgorithm,
 ];
 
-export const getAllAlgorithms = (): SimilarityAlgorithm[] => {
+export const getAllAlgorithms = (): IImageSimilarityCalculator[] => {
     return similarityAlgorithms;
 };

@@ -1,9 +1,9 @@
 import {
-    SimilarityAlgorithm,
+    IImageSimilarityCalculator,
     SimilarityResponse,
 } from '../similiarty-algorithms';
 
-const FakeAlgorithm: SimilarityAlgorithm = {
+const FakeAlgorithm: IImageSimilarityCalculator = {
     algorithmData: {
         isCalculating: false,
         latestSimilarityResponse: null,
@@ -26,7 +26,7 @@ const FakeAlgorithm: SimilarityAlgorithm = {
         FakeAlgorithm.algorithmData.isCalculating = false;
         return simResponse;
     },
-    loadModel: async () => {
+    loadCalculator: async () => {
         return new Promise((resolve, reject) => {
             const millis = Math.floor(Math.random() * 2000 + 1000);
             setTimeout(() => {

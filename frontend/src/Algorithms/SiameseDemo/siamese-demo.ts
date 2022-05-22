@@ -1,5 +1,5 @@
 import {
-    SimilarityAlgorithm,
+    IImageSimilarityCalculator,
     SimilarityResponse,
 } from '../similiarty-algorithms';
 
@@ -73,7 +73,7 @@ async function loadModel() {
     return model;
 }
 
-const SiameseDemoAlgorithm: SimilarityAlgorithm = {
+const SiameseDemoAlgorithm: IImageSimilarityCalculator = {
     algorithmData: {
         isCalculating: false,
         latestSimilarityResponse: null,
@@ -129,7 +129,7 @@ const SiameseDemoAlgorithm: SimilarityAlgorithm = {
             return { responseTimeInMillis: 0, similarity: 0 };
         }
     },
-    loadModel: async () => {
+    loadCalculator: async () => {
         const model = await loadModel();
         return model;
     },

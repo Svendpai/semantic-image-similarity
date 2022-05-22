@@ -9,12 +9,12 @@ import { registerRootComponent } from 'expo';
 import React, { useEffect, useState } from 'react';
 import {
     getAllAlgorithms,
-    SimilarityAlgorithm,
+    IImageSimilarityCalculator,
     SimilarityResponse,
 } from './src/Algorithms/similiarty-algorithms';
 
 type Use = {
-    algorithms: SimilarityAlgorithm[];
+    algorithms: IImageSimilarityCalculator[];
 };
 
 export type ModelData = {

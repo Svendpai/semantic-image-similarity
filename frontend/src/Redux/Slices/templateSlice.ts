@@ -1,22 +1,22 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import {
     getAllAlgorithms,
-    SimilarityAlgorithm,
-    SimilarityAlgorithmData,
+    IImageSimilarityCalculator,
+    SimilarityCalculatorData,
     SimilarityResponse,
 } from '../../Algorithms/similiarty-algorithms';
 
 export interface CounterState {
     instructionImageUri: string;
     documentationImageUri: string;
-    algorithmData: SimilarityAlgorithmData[];
+    algorithmData: SimilarityCalculatorData[];
 }
 
 const initialState: CounterState = {
     instructionImageUri: '',
     documentationImageUri: '',
     algorithmData: getAllAlgorithms().map((algorithm) => {
-        let algorithmData: SimilarityAlgorithmData = {
+        let algorithmData: SimilarityCalculatorData = {
             ...algorithm.algorithmData,
         };
         return algorithmData;

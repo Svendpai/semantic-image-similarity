@@ -17,7 +17,7 @@ import { TouchableOpacity, Image, Platform } from 'react-native';
 import TensorCamera from '../Camera/TensorCamera';
 import {
     getAllAlgorithms,
-    SimilarityAlgorithm,
+    IImageSimilarityCalculator,
 } from '../../Algorithms/similiarty-algorithms';
 import {
     setModel,

@@ -5,15 +5,15 @@ import { Text } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import {
     getAllAlgorithms,
-    SimilarityAlgorithm,
-    SimilarityAlgorithmData,
+    IImageSimilarityCalculator,
+    SimilarityCalculatorData,
     SimilarityResponse,
 } from '../../Algorithms/similiarty-algorithms';
 import { updateLatestSimilarityResponse } from '../../Redux/Slices/templateSlice';
 import { RootState } from '../../Redux/store';
 
 interface HomeProps {
-    algorithm: SimilarityAlgorithm;
+    algorithm: IImageSimilarityCalculator;
     index: number;
     model: any;
 }
