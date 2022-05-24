@@ -1,0 +1,5 @@
+models/embeddings/contrastive_loss_embedding_extractor = 0.855
+models/embeddings/binary_cross_entropy_loss_embedding_extractor = 0.425
+models/embeddings/triplet_loss_embedding_extractor = 0.765
+models/embeddings/pretrained_mobilenet_embedding_extractor = 0.45
+models/embeddings/pretrained_resnet_embedding_extractor = 0.995
