@@ -37,5 +37,5 @@ def get_text_in_file(path):
             if (file[0:file.__len__()-4] == image_name):
                 shutil.copyfile(images_path+'/'+file, './deep-learning/data/dataset/' + image_name[0:image_name.__len__()-7] +'/' + file)
 
-
-get_text_in_file(r'C:\Documents\Git\semantic-image-similarity\deep-learning\data\the_oxford_buildings_dataset')
+if __name__ == '__main__':
+    get_text_in_file(r'C:\Documents\Git\semantic-image-similarity\deep-learning\data\the_oxford_buildings_dataset')
