@@ -1,6 +1,6 @@
 import { TestBlurCalculator } from './Calculators/BlurCalculators/TestBlurCalculator';
 import { TestLightLevelCalculator } from './Calculators/LightLevelCalculators/TestLightLevelCalcualtors';
-import SiameseSimilarityCalculator from './Calculators/SimilairtyCalculators/SiameseSimarityCalcualtor/SiameseCalculator';
+import SiameseSimilarityCalculator from './Calculators/SimilairtyCalculators/SiameseSimarityCalcualtor/PretrainedMobileNetV2';
 import { TestSimilarityCalculator } from './Calculators/SimilairtyCalculators/TestModel/TestSimilarityCalculator';
 import SiameseEvaluator from './Evaluators/SiameseEvaluator/SiameseDemo/SiameseEvaluator';
 import { TestEvaluator } from './Evaluators/TestEvaluator';

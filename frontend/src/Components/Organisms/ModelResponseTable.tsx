@@ -128,7 +128,7 @@ const ModelReponseTable: React.FC<{ evaluators: IDocumentationImageEvaluator[] }
                             }}
                             itemThree={{
                                 text: evaluator.latestEvaluation
-                                    ? Math.round(evaluator.latestEvaluation.similarity.responseTime * 100) + 'ms'
+                                    ? Math.round(evaluator.latestEvaluation.similarity.responseTime) + 'ms'
                                     : '--ms',
                                 colorMarking: evaluateColorFromMeasureGivenThresholds(
                                     evaluator?.latestEvaluation?.similarity?.responseTime,
