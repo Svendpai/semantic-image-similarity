@@ -23,7 +23,7 @@ import {
     RegisteredLightLevelCalculator,
     RegisteredSimilarityCalculator,
 } from '../Domain/EvaluatorAPI';
-import { EvaluatorContext, loadAllEvaluators } from '../../App';
+import { EvaluatorContext } from '../../App';
 import TextComponent from '../Components/Atoms/TextComponent';
 import { RootState } from '../Redux/store';
 import ContainerCenteringContent from '../Components/Atoms/ContainerCenteringContent';
@@ -88,6 +88,7 @@ const Root = () => {
 
     useEffect(() => {
         if (documentaionImage && instructionImage) {
+            console.log('Evaluate all');
             context.dispatch({
                 type: 'evaluateAll',
                 data: { instructionImage, documentationImage: documentaionImage },

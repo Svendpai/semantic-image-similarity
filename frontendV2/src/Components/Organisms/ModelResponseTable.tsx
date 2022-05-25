@@ -89,7 +89,6 @@ export const evaluateColorFromMeasureGivenThresholds = (
     thresholds: { okay: number; good: number },
     reversed?: boolean
 ): 'danger' | 'warn' | 'success' | 'light' => {
-    console.log(measure);
     if (!measure) {
         return 'light';
     }

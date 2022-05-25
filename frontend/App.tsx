@@ -3,7 +3,6 @@ import { store } from './src/Redux/store';
 import { Provider } from 'react-redux';
 import { NativeBaseProvider } from 'native-base';
 import Camera from './src/Screens/Camera/Camera';
-import Home from './src/Screens/Home/Home';
 import { useFonts } from 'expo-font';
 import { registerRootComponent } from 'expo';
 import React, { useEffect, useState } from 'react';
@@ -12,6 +11,7 @@ import {
     IImageSimilarityCalculator,
     SimilarityResponse,
 } from './src/Algorithms/similiarty-algorithms';
+import Home from './src/Components/Screens/Home';
 
 type Use = {
     algorithms: IImageSimilarityCalculator[];
@@ -66,8 +66,9 @@ const App: React.FC = (): JSX.Element => {
             <NativeBaseProvider>
                 <NativeRouter>
                     <Routes>
-                        <Route path='/' element={<Home models={models} />} />
-                        <Route path='/camera/:mode' element={<Camera />} />
+                        {/*<Route path='/' element={<Home models={models} />} />*/}
+                        <Route path='/' element={<Home />} />
+                        <Route path='/camera/:mode' element={<Home />} />
                     </Routes>
                 </NativeRouter>
             </NativeBaseProvider>

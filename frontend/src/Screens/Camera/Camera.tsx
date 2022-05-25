@@ -279,19 +279,11 @@ const Camera: React.FC<CameraProps> = ({}) => {
                                         aspectRatio: 1 / (4 / 3),
                                         width: getWidth(),
                                         height: getWidth(),
-                                        // aspectRatio: 1 / (4 / 3),
-                                        // width: getWidth(),
-                                        // height: getWidth() * 1.333
-                                        // opacity:
-                                        //     mode == 'instruction' &&
-                                        //     count.documentationImageUri
-                                        //         ? 0.7
-                                        //         : 1,
                                     }}
                                     onCameraReady={() => setCameraReady(true)}
                                     type={type}
                                     flashMode={flashMode}
-                                ></CameraView>
+                                />
                             )}
                         </Box>
                         <Box

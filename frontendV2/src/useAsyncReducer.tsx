@@ -16,7 +16,6 @@ export type Action =
       };
 
 export type AsyncEvaluatorsReducerState = { reducerState: EvaluatorState; loading: boolean; error: any };
-type ReturnType = { state: AsyncEvaluatorsReducerState; dispatch: (action: Action) => void };
 
 const useAsyncReducer = (
     reducer: (state: EvaluatorState, action: Action) => Promise<EvaluatorState>,

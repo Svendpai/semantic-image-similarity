@@ -21,7 +21,7 @@ const CameraContainerView: React.FC<Props> = ({ flashMode, type, setCameraReady,
         if (Platform.OS === 'web') {
             return 600;
         }
-        console.log(Math.floor(windowWidth));
+
         return Math.floor(windowWidth);
     };
 

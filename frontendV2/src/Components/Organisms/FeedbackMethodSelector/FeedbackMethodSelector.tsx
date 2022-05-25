@@ -17,7 +17,6 @@ const FeedbackMethodSelector: React.FC = () => {
     };
 
     const selectLiveFeedbackMethod = (evaluatorName: RegisteredEvaluator) => {
-        console.log(evaluatorName);
         dispatch(setSelectedLiveFeedbackMethod(evaluatorName));
     };
 

@@ -1,6 +1,6 @@
 import { TestBlurCalculator } from '../Calculators/BlurCalculators/TestBlurCalculator';
 import { TestLightLevelCalculator } from '../Calculators/LightLevelCalculators/TestLightLevelCalcualtors';
-import { TestSimilarityCalculator } from '../Calculators/SimilairtyCalculators/TestSimilarityCalculator';
+import { TestSimilarityCalculator } from '../Calculators/SimilairtyCalculators/TestModel/TestSimilarityCalculator';
 import { EvaluatorAPI, RegisteredEvaluator } from '../EvaluatorAPI';
 import { IDocumentationImageEvaluator } from '../Interfaces/IDocumentationImageEvaluator';
 import { IImageBlurCalculator } from '../Interfaces/IImageBlurCalculator';

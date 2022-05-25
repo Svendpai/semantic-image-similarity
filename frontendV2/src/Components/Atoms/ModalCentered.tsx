@@ -23,7 +23,6 @@ const ModalComponent: React.ForwardRefRenderFunction<ModalHandle, ModalProps> = 
 
     useImperativeHandle(ref, () => ({
         display: () => {
-            console.log('showing modal');
             setShowModal(true);
         },
         close: () => {},

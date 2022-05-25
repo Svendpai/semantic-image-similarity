@@ -6,5 +6,5 @@ export interface IImageLightLevelCalculator {
     acceptResponseTimeThresholds: { okay: number; good: number };
     loadCalculator: () => Promise<boolean>;
     isCalculatorReady: () => boolean;
-    calculateLightLevel: (image: string, image2: string) => Promise<LightLevelResponse>;
+    calculateLightLevel: (image: string) => Promise<LightLevelResponse>;
 }

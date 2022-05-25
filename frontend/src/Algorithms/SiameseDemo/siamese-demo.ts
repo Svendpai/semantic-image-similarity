@@ -1,15 +1,8 @@
-import {
-    IImageSimilarityCalculator,
-    SimilarityResponse,
-} from '../similiarty-algorithms';
+import { IImageSimilarityCalculator, SimilarityResponse } from '../similiarty-algorithms';
 
 import * as tf from '@tensorflow/tfjs';
 import { Tensor, NumericDataType } from '@tensorflow/tfjs-core';
-import {
-    decodeJpeg,
-    bundleResourceIO,
-    cameraWithTensors,
-} from '@tensorflow/tfjs-react-native';
+import { decodeJpeg, bundleResourceIO, cameraWithTensors } from '@tensorflow/tfjs-react-native';
 import { View, Text, Image } from 'react-native';
 import { manipulateAsync, ActionResize } from 'expo-image-manipulator';
 import { mode } from 'native-base/lib/typescript/theme/tools';
@@ -47,9 +40,9 @@ const uriToBlob = async (uri: string) => {
 async function decodeImage(img: any): Promise<tf.Tensor3D> {
     console.log(img);
     //const imageAssetPath = Image.resolveAssetSource(img.uri);
-    console.log('maybe sir');
+
     const response: Response = await tf.util.fetch(img.uri);
-    console.log('yes sir');
+
     const imageDataArrayBuffer = await response.arrayBuffer();
     const imageData = new Uint8Array(imageDataArrayBuffer);
     return decodeJpeg(imageData);
@@ -84,25 +77,15 @@ const SiameseDemoAlgorithm: IImageSimilarityCalculator = {
     calculateSimilarity: async (image1: any, image2: any, model: any) => {
         const timeStart = new Date().getTime();
 
-        const resizedImage1 = await manipulateAsync(image1, [
-            { resize: { width: 160, height: 160 } },
-        ]);
-        const resizedImage2 = await manipulateAsync(image2, [
-            { resize: { width: 160, height: 160 } },
-        ]);
+        const resizedImage1 = await manipulateAsync(image1, [{ resize: { width: 160, height: 160 } }]);
+        const resizedImage2 = await manipulateAsync(image2, [{ resize: { width: 160, height: 160 } }]);
         if (model) {
             console.log('trying to predict');
             let offset = tf.scalar(127.5);
             console.log('trying t rpedict');
             const prediction: any = model.predict([
-                (await decodeImage(resizedImage1))
-                    .sub(offset)
-                    .div(offset)
-                    .expandDims(),
-                (await decodeImage(resizedImage2))
-                    .sub(offset)
-                    .div(offset)
-                    .expandDims(),
+                (await decodeImage(resizedImage1)).sub(offset).div(offset).expandDims(),
+                (await decodeImage(resizedImage2)).sub(offset).div(offset).expandDims(),
             ]);
 
             console.log('PREDICTION:');
@@ -114,9 +97,7 @@ const SiameseDemoAlgorithm: IImageSimilarityCalculator = {
 
             // calculate euclidean distance
 
-            const distance = tf.sqrt(
-                tf.sum(tf.squaredDifference(image1Features, image2Features))
-            );
+            const distance = tf.sqrt(tf.sum(tf.squaredDifference(image1Features, image2Features)));
             console.log(distance.dataSync());
             const timeEnd = new Date().getTime();
 

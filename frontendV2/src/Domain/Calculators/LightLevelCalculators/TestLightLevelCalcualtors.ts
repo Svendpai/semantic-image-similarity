@@ -6,7 +6,7 @@ class TestLightLevelCalculator implements IImageLightLevelCalculator {
     calculator?: any;
     loadCalculator: () => Promise<boolean>;
     isCalculatorReady: () => boolean;
-    calculateLightLevel: (image: string, image2: string) => Promise<LightLevelResponse>;
+    calculateLightLevel: (image: string) => Promise<LightLevelResponse>;
 
     constructor() {
         this.acceptResponseTimeThresholds = { okay: 0.33, good: 0.65 };
