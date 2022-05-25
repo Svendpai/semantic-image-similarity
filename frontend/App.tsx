@@ -1,78 +1,77 @@
-import { NativeRouter, Route, Routes } from 'react-router-native';
-import { store } from './src/Redux/store';
-import { Provider } from 'react-redux';
+import { StatusBar } from 'expo-status-bar';
 import { NativeBaseProvider } from 'native-base';
-import Camera from './src/Screens/Camera/Camera';
-import Home from './src/Screens/Home/Home';
-import { useFonts } from 'expo-font';
-import { registerRootComponent } from 'expo';
-import React, { useEffect, useState } from 'react';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { Provider } from 'react-redux';
+import { store } from './src/Redux/store';
+import { Root } from './src/navigation/Navigation';
+import React, { useState } from 'react';
 import {
-    getAllAlgorithms,
-    SimilarityAlgorithm,
-    SimilarityResponse,
-} from './src/Algorithms/similiarty-algorithms';
+    EvaluatorAPI,
+    RegisteredBlurCalculator,
+    RegisteredEvaluator,
+    RegisteredLightLevelCalculator,
+    RegisteredSimilarityCalculator,
+} from './src/Domain/EvaluatorAPI';
+import { TestEvaluator } from './src/Domain/Evaluators/TestEvaluator';
+import { IDocumentationImageEvaluator } from './src/Domain/Interfaces/IDocumentationImageEvaluator';
+import useAsyncReducer, { AsyncEvaluatorsReducerState, Action, EvaluatorState } from './src/useAsyncReducer';
 
-type Use = {
-    algorithms: SimilarityAlgorithm[];
-};
-
-export type ModelData = {
-    model: any;
-    index: number;
-};
-
-const useModels = ({ algorithms }: Use) => {
-    const [modelLoaded, setModelLoaded] = useState<boolean>(false);
-    const [modelIsLoading, setModelIsLoading] = useState<boolean>(true);
-    const [models, setModels] = useState<ModelData[]>([]);
-
-    const loadModels = async (algorithms: any) => {
-        const modelList: any = [...models];
-
-        for (let i = 0; i < algorithms.length; i++) {
-            console.log(
-                'loading model for algorithm: ',
-                algorithms[i].algorithmData.displayName
-            );
-            console.log('fainlly printed');
-
-            if (!modelList.find((m: any) => m.index === i)) {
-                console.log('trying to load model');
-
-                const model = await algorithms[i].loadModel();
-                modelList.push({ index: i, model: model });
+async function reducer(state: EvaluatorState, action: Action) {
+    switch (action.type) {
+        case 'init':
+            return { evaluators: await EvaluatorAPI.loadAllEvaluators() };
+        case 'evaluate':
+            const evaluators = state.evaluators;
+            const targetEvaluator = evaluators.find((e) => e.name === action.data.evaluator);
+            if (!targetEvaluator) return state;
+            targetEvaluator.evaluateAsDocumentationImage(action.data.instructionImage, action.data.documentationImage);
+            return { evaluators: evaluators };
+        case 'evaluateAll':
+            //the commented code calculated one at a time
+            for (let evaluator of state.evaluators) {
+                await evaluator.evaluateAsDocumentationImage(
+                    action.data.instructionImage,
+                    action.data.documentationImage
+                );
             }
-            console.log('not loading');
-        }
 
-        setModels(modelList);
-    };
+            /*await Promise.all(
+                state.evaluators.map((evaluator) => {
+                    return evaluator.evaluateAsDocumentationImage(
+                        action.data.instructionImage,
+                        action.data.documentationImage
+                    );
+                })
+            );*/
 
-    useEffect(() => {
-        if (models.length < algorithms.length) loadModels(algorithms);
-        console.log(models.length);
-    }, []);
+            return { evaluators: state.evaluators };
+        default:
+            throw new Error();
+    }
+}
 
-    return models;
-};
-
-const App: React.FC = (): JSX.Element => {
-    const models = useModels({ algorithms: getAllAlgorithms() });
-    //console.log(models.length);
+const EvaluatorContext = React.createContext<{
+    state: AsyncEvaluatorsReducerState;
+    dispatch: (action: Action) => void;
+}>(
+    {} as {
+        state: AsyncEvaluatorsReducerState;
+        dispatch: (action: Action) => void;
+    }
+);
+export { EvaluatorContext };
+export default function App() {
+    const { state, dispatch } = useAsyncReducer(reducer, { evaluators: [] });
 
     return (
         <Provider store={store}>
-            <NativeBaseProvider>
-                <NativeRouter>
-                    <Routes>
-                        <Route path='/' element={<Home models={models} />} />
-                        <Route path='/camera/:mode' element={<Camera />} />
-                    </Routes>
-                </NativeRouter>
-            </NativeBaseProvider>
+            <EvaluatorContext.Provider value={{ state, dispatch }}>
+                <NativeBaseProvider>
+                    <SafeAreaProvider>
+                        <Root />
+                    </SafeAreaProvider>
+                </NativeBaseProvider>
+            </EvaluatorContext.Provider>
         </Provider>
     );
-};
-
-export default registerRootComponent(App);
+}

@@ -3,20 +3,13 @@ const { getDefaultConfig } = require('expo/metro-config');
 
 // module.exports = getDefaultConfig(__dirname);
 
-const blacklist = require('metro-config/src/defaults/exclusionList');
-
-module.exports = {
-  transformer: {
-    getTransformOptions: async () => ({
-      transform: {
-        experimentalImportSupport: false,
-        inlineRequires: false,
-      },
-    }),
-  },
-  resolver: {
-    assetExts: ['bin', 'txt', 'jpg', 'ttf', 'png'],
-    sourceExts: ['js', 'json', 'ts', 'tsx', 'jsx'],
-    blacklistRE: blacklist([/platform_node/])
-  },
-};
+module.exports = (() => {
+    const defaultConfig = getDefaultConfig(__dirname);
+    const { assetExts } = defaultConfig.resolver;
+    return {
+        resolver: {
+            // Add bin to assetExts
+            assetExts: [...assetExts, 'bin'],
+        },
+    };
+})();
