@@ -1,25 +1,36 @@
 import * as tf from '@tensorflow/tfjs';
+import * as FileSystem from 'expo-file-system';
 
-import { decodeJpeg, bundleResourceIO, cameraWithTensors } from '@tensorflow/tfjs-react-native';
+import { fetch, decodeJpeg, bundleResourceIO, cameraWithTensors } from '@tensorflow/tfjs-react-native';
 
 import { manipulateAsync } from 'expo-image-manipulator';
-
+import { Image } from 'react-native';
 import '@tensorflow/tfjs-backend-webgl';
 import '@tensorflow/tfjs-react-native';
 import { IImageSimilarityCalculator } from '../../../Interfaces/IImageSimilarityCalculator';
 import { SimilarityResponse } from '../../../Types/CalculationResponseObjects';
-async function decodeImage(img: any): Promise<tf.Tensor3D> {
-    //const imageAssetPath = Image.resolveAssetSource(img.uri);
 
-    console.log('d1');
-    const response: Response = await tf.util.fetch(img.uri);
-    console.log('d2');
-    const imageDataArrayBuffer = await response.arrayBuffer();
-    console.log('d2');
-    const imageData = new Uint8Array(imageDataArrayBuffer);
-    const res = decodeJpeg(imageData);
-    console.log('d3');
-    return res;
+async function decodeImage(img: any): Promise<tf.Tensor3D> {
+
+    console.log(img.uri);  
+    const fileUri = img.uri;
+    const imgB64 = await FileSystem.readAsStringAsync(fileUri, {encoding: FileSystem.EncodingType.Base64});
+    const imgBuffer = tf.util.encodeString(imgB64, 'base64').buffer;
+    const raw = new Uint8Array(imgBuffer)  
+    const imageTensor = decodeJpeg(raw);
+
+    console.log("imageTensor", imageTensor);
+    // imageTensor.reshape([224, 224, 3]);
+    // console.log("imageTensor", imageTensor);
+    // imageTensor = imageTensor.div(tf.scalar(255));
+    // // subtract the mean RGB value.
+    // const meanR = 0.485;
+    // const meanG = 0.456;
+    // const meanB = 0.406;
+    // const meanRGB = tf.tensor3d([meanR, meanG, meanB], [1, 1, 3]);
+    // imageTensor = imageTensor.sub(meanRGB);
+    // imageTensor = tf.expandDims(imageTensor, 0);
+    return imageTensor;
 }
 
 async function loadModel() {
@@ -55,10 +66,9 @@ class SiameseSimilarityCalculator implements IImageSimilarityCalculator {
 
             const resizedImage1 = await manipulateAsync(image1, [{ resize: { width: 160, height: 160 } }]);
             const resizedImage2 = await manipulateAsync(image2, [{ resize: { width: 160, height: 160 } }]);
-            console.log('1');
             if (this.model) {
+                console.log("ehh");
                 let offset = tf.scalar(127.5);
-                console.log('2');
                 const prediction: any = this.model.predict([
                     (await decodeImage(resizedImage1)).sub(offset).div(offset).expandDims(),
                     (await decodeImage(resizedImage2)).sub(offset).div(offset).expandDims(),
