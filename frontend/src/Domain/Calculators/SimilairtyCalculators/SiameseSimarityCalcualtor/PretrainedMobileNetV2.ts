@@ -2,12 +2,14 @@ import * as tf from '@tensorflow/tfjs';
 import * as FileSystem from 'expo-file-system';
 
 import { decodeJpeg, bundleResourceIO } from '@tensorflow/tfjs-react-native';
+import { Platform } from 'react-native';
 
-import { manipulateAsync } from 'expo-image-manipulator';
+import { manipulateAsync, SaveFormat } from 'expo-image-manipulator';
 import '@tensorflow/tfjs-backend-webgl';
 import '@tensorflow/tfjs-react-native';
 import { IImageSimilarityCalculator } from '../../../Interfaces/IImageSimilarityCalculator';
 import { SimilarityResponse } from '../../../Types/CalculationResponseObjects';
+import { TextField } from 'native-base';
 
 async function decodeImage(img: any): Promise<tf.Tensor3D> {
     const fileUri = img.uri;
@@ -25,6 +27,9 @@ async function calculateLightLevel(img: any) {
     const raw = new Uint8Array(imgBuffer);
     const imageTensor = decodeJpeg(raw);
     const values = imageTensor.dataSync();
+    
+    console.log("val--");
+    console.log(values);
 
     let sum = 0;
     for (let i = 0; i < values.length; i++) {
@@ -38,14 +43,12 @@ async function calculateLightLevel(img: any) {
 
 }
 
+function normalize(value: any, fromMin: number, fromMax: number, toMin: number, toMax: number) {
+    return (value - fromMin) * (toMax - toMin) / (fromMax - fromMin) + toMin;
+}
+
 async function preprocessImage(imageTensor: tf.Tensor3D) {
     imageTensor = imageTensor.div(tf.scalar(255));
-    // // subtract mean
-    // const meanR = 0.485;
-    // const meanG = 0.456;
-    // const meanB = 0.406;
-    // const meanRGB = tf.tensor3d([meanR, meanG, meanB], [1, 1, 3]);
-    // imageTensor = imageTensor.sub(meanRGB);
     imageTensor = tf.expandDims(imageTensor, 0);
     return imageTensor;
 }
@@ -99,8 +102,8 @@ class SiameseSimilarityCalculator implements IImageSimilarityCalculator {
 
                 const timeStart = new Date().getTime();
 
-                const resizedImage1 = await manipulateAsync(image1, [{ resize: { width: 224, height: 224 } }]);
-                const resizedImage2 = await manipulateAsync(image2, [{ resize: { width: 224, height: 224 } }]);
+                const resizedImage1 = await manipulateAsync(image1, [{ resize: { width: 224, height: 224 } }], { compress: 1, format: SaveFormat.JPEG });
+                const resizedImage2 = await manipulateAsync(image2, [{ resize: { width: 224, height: 224 } }], { compress: 1, format: SaveFormat.JPEG });
 
                 const resizedImage1_pre = await preprocessImage(await decodeImage(resizedImage1));
                 const resizedImage2_pre = await preprocessImage(await decodeImage(resizedImage2));
@@ -108,12 +111,15 @@ class SiameseSimilarityCalculator implements IImageSimilarityCalculator {
                 const image1Features = (this.model.predict(resizedImage1_pre) as tf.Tensor);
                 const image2Features = (this.model.predict(resizedImage2_pre) as tf.Tensor);
 
-                const image1LightLevel = await calculateLightLevel(resizedImage1);
-                const image2LightLevel = await calculateLightLevel(resizedImage2);
-
-                const similarity = calculateCosineSimimilarity(image1Features.dataSync(), image2Features.dataSync());
+                let similarity = calculateCosineSimimilarity(image1Features.dataSync(), image2Features.dataSync());
+                if(Platform.OS === "android") {
+                    similarity = normalize(similarity, 0.5, 1, 0, 1);
+                }
 
                 const timeEnd = new Date().getTime();
+
+                const image1LightLevel = await calculateLightLevel(resizedImage1);
+                const image2LightLevel = await calculateLightLevel(resizedImage2);
 
                 console.log("image1LightLevel: " + image1LightLevel);
                 console.log("image2LightLevel: " + image2LightLevel);

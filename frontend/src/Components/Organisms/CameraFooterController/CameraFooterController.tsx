@@ -40,15 +40,17 @@ const CameraFooterController: React.FC<{
         dispatch(setGalleryOpen(true));
         let pickerResult = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            allowsEditing: true,
-            aspect: [4, 3],
+            allowsEditing: false,
+            aspect: [3, 4],
             quality: 1,
         });
         dispatch(setGalleryOpen(false));
         if (!pickerResult.cancelled) {
             if (cameraMode === 'documentation') {
+                navigation.navigate('Editimage');
                 dispatch(setDocumentationImage(pickerResult.uri));
             } else {
+                navigation.navigate('Home');
                 dispatch(setInstructionImage(pickerResult.uri));
             }
         }
