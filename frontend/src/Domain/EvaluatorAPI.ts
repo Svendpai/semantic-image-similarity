@@ -1,6 +1,6 @@
 import { TestBlurCalculator } from './Calculators/BlurCalculators/TestBlurCalculator';
 import { TestLightLevelCalculator } from './Calculators/LightLevelCalculators/TestLightLevelCalcualtors';
-import SiameseSimilarityCalculator from './Calculators/SimilairtyCalculators/SiameseSimarityCalcualtor/PretrainedMobileNetV2';
+import PretrainedMobileNetV2Calculator from './Calculators/SimilairtyCalculators/PretrainedMobileNetV2Calculator/PretrainedMobileNetV2';
 import { TestSimilarityCalculator } from './Calculators/SimilairtyCalculators/TestModel/TestSimilarityCalculator';
 import SiameseEvaluator from './Evaluators/SiameseEvaluator/SiameseDemo/SiameseEvaluator';
 import { TestEvaluator } from './Evaluators/TestEvaluator';
@@ -9,8 +9,8 @@ import { IImageBlurCalculator } from './Interfaces/IImageBlurCalculator';
 import { IImageLightLevelCalculator } from './Interfaces/IImageLightLevelCalculator';
 import { IImageSimilarityCalculator } from './Interfaces/IImageSimilarityCalculator';
 
-export type RegisteredEvaluator = 'TestEvaluator' | 'SiameseEvaluator';
-export type RegisteredSimilarityCalculator = 'TestSimilarityCalculator' | 'SiameseSimilarityCalculator';
+export type RegisteredEvaluator = 'TestEvaluator' | 'Pretrained MobileNetV2 Evaluator';
+export type RegisteredSimilarityCalculator = 'TestSimilarityCalculator' | 'PretrainedMobileNetV2Calculator';
 export type RegisteredLightLevelCalculator = 'TestLightLevelCalculator';
 export type RegisteredBlurCalculator = 'TestBlurCalculator';
 
@@ -19,7 +19,7 @@ export type RegisteredBlurCalculator = 'TestBlurCalculator';
 };*/
 const availableSimilarityCalculators: { [key in RegisteredSimilarityCalculator]: IImageSimilarityCalculator } = {
     TestSimilarityCalculator: new TestSimilarityCalculator(),
-    SiameseSimilarityCalculator: new SiameseSimilarityCalculator(),
+    PretrainedMobileNetV2Calculator: new PretrainedMobileNetV2Calculator(),
 };
 const availableLightLevelCalculators: { [key in RegisteredLightLevelCalculator]: IImageLightLevelCalculator } = {
     TestLightLevelCalculator: new TestLightLevelCalculator(),
@@ -78,8 +78,8 @@ const EvaluatorAPI = {
                 'TestEvaluator'
             ),
             new SiameseEvaluator(
-                'SiameseEvaluator',
-                similairtyCalculators.SiameseSimilarityCalculator,
+                'Pretrained MobileNetV2 Evaluator',
+                similairtyCalculators.PretrainedMobileNetV2Calculator,
                 lightLevelCalculators.TestLightLevelCalculator,
                 blurCalculators.TestBlurCalculator
             ),

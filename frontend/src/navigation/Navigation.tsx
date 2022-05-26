@@ -91,7 +91,7 @@ const Root = () => {
             console.log('Evaluate all');
             context.dispatch({
                 type: 'evaluateAll',
-                data: { instructionImage, documentationImage: documentaionImage },
+                data: { instructionImage: instructionImage, documentationImage: documentaionImage },
             });
         }
     }, [documentaionImage, instructionImage]);
