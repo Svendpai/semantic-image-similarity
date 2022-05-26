@@ -7,18 +7,13 @@ import { colors } from './Colors';
 import ContainerCenteringContent from './ContainerCenteringContent';
 import ContainerHorizontalAlign from './ContainerHorizontalAlign';
 import ContainerVerticalAlign from './ContainerVerticalAlign';
+import { ModalHandle } from './ModalCentered';
 import TextComponent from './TextComponent';
 
 type ModalProps = {
     onContinue: () => void;
 };
-
-export type ModalHandle = {
-    display: () => void;
-    close: () => void;
-};
-
-const ModalComponent: React.ForwardRefRenderFunction<ModalHandle, ModalProps> = ({ onContinue }, ref) => {
+const ModalWarning2: React.ForwardRefRenderFunction<ModalHandle, ModalProps> = ({ onContinue }, ref) => {
     const [showModal, setShowModal] = React.useState(false);
 
     useImperativeHandle(ref, () => ({
@@ -35,20 +30,17 @@ const ModalComponent: React.ForwardRefRenderFunction<ModalHandle, ModalProps> = 
                     <Box w='100%' h='30%'>
                         <ContainerCenteringContent>
                             <TextComponent color={'black'} textAlign='center' fontSize='large' fontWeight='bold'>
-                                {'This activity requires a high level of similarity'}
+                                {'Feature Limitations'}
                             </TextComponent>
                         </ContainerCenteringContent>
                     </Box>
                     <Box w='100%' h='50%'>
                         <ContainerVerticalAlign paddingY={4}>
-                            <TextComponent fontSize='medium' color='black'>
-                                {'Are you confident, that the image highligsts the completion of your task?'}
-                            </TextComponent>
                             <TextComponent fontSize='medium' color='danger'>
                                 <TextComponent fontSize='medium' color='danger' fontWeight='bold'>
                                     {'Be aware:'}
                                 </TextComponent>{' '}
-                                {'the task creator can reject your submission!'}
+                                {'the that the given feature has limitations. Please use the feature with caution.'}
                             </TextComponent>
                         </ContainerVerticalAlign>
                     </Box>
@@ -72,11 +64,14 @@ const ModalComponent: React.ForwardRefRenderFunction<ModalHandle, ModalProps> = 
                                 color='danger'
                                 height='large'
                                 width={'47%'}
-                                onPress={onContinue}
+                                onPress={() => {
+                                    onContinue();
+                                    setShowModal(false);
+                                }}
                             >
-                                <ContainerHorizontalAlign>
-                                    <IconWithText color='white' icon='send' text='Force Submit' />
-                                </ContainerHorizontalAlign>
+                                <TextComponent fontWeight='bold' color='white'>
+                                    Use Feature
+                                </TextComponent>
                             </Button>
                         </ContainerHorizontalAlign>
                     </Box>
@@ -86,6 +81,4 @@ const ModalComponent: React.ForwardRefRenderFunction<ModalHandle, ModalProps> = 
     );
 };
 
-
-
-export default forwardRef(ModalComponent);
+export default forwardRef(ModalWarning2);

@@ -13,7 +13,9 @@ export type IconName =
     | 'real-time-off'
     | 'back'
     | 'cancel'
-    | 'send';
+    | 'send'
+    | 'overlay-on'
+    | 'overlay-off';
 
 export type IconSize = 'small' | 'medium' | 'large' | 'default';
 
@@ -57,7 +59,10 @@ const Icon: React.FC<Props> = ({ name, color, size }) => {
             return <Ionicons key={name} name='close' color={colorToUse} size={sizeToUse} />;
         case 'send':
             return <Ionicons key={name} name='send-outline' color={colorToUse} size={sizeToUse} />;
-
+        case 'overlay-on':
+            return <Ionicons key={name} name='copy' color={colorToUse} size={sizeToUse} />;
+        case 'overlay-off':
+            return <Ionicons key={name} name='copy-outline' color={colorToUse} size={sizeToUse} />;
         default:
             return undefined;
     }

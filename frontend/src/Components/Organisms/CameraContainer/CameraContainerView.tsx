@@ -1,6 +1,6 @@
 import { Box, IBoxProps } from 'native-base';
 import { useRef, useState } from 'react';
-import { Dimensions, Platform } from 'react-native';
+import { Dimensions, Image, Platform } from 'react-native';
 import { Camera, CameraType, FlashMode } from 'expo-camera';
 import { color } from 'native-base/lib/typescript/theme/styled-system';
 import { colors } from '../../Atoms/Colors';
@@ -10,9 +10,20 @@ interface Props {
     type: number | CameraType | undefined;
     setCameraReady: (value: boolean) => void;
     cameraRef: React.RefObject<Camera> | null;
+    overlayImageUri: string | undefined;
+    overlayImageOpacity: number;
+    overlayActivated: boolean;
 }
 
-const CameraContainerView: React.FC<Props> = ({ flashMode, type, setCameraReady, cameraRef }) => {
+const CameraContainerView: React.FC<Props> = ({
+    flashMode,
+    type,
+    setCameraReady,
+    cameraRef,
+    overlayActivated,
+    overlayImageOpacity,
+    overlayImageUri,
+}) => {
     const getMaxWidth = () => {
         const windowWidth = Dimensions.get('window').width;
 
@@ -47,6 +58,19 @@ const CameraContainerView: React.FC<Props> = ({ flashMode, type, setCameraReady,
                 flashMode={flashMode}
                 useCamera2Api={false}
             />
+            {overlayActivated && overlayImageUri && (
+                <Image
+                    source={{ uri: overlayImageUri }}
+                    style={{
+                        width: getMaxWidth(),
+                        height: getMaxWidth() * 1.4,
+
+                        opacity: overlayImageOpacity,
+                        position: 'absolute',
+                        zIndex: 100,
+                    }}
+                />
+            )}
         </Box>
     );
 };

@@ -39,6 +39,9 @@ async function preprocessImage(imageTensor: tf.Tensor3D) {
     return imageTensor;
 }
 
+// negative values means that the documentation image is brighter than the instruction image
+// positive values means that the documentation image is darker than the instruction image
+// maybe set at threshold of 0.2 difference to be a warning sign
 async function calculateLightLevel(imageTensor: tf.Tensor3D) {
     const values = imageTensor.dataSync();
 
@@ -46,10 +49,6 @@ async function calculateLightLevel(imageTensor: tf.Tensor3D) {
     for (let i = 0; i < values.length; i++) {
         sum += values[i];
     }
-
-    // negative values means that the documentation image is brighter than the instruction image
-    // positive values means that the documentation image is darker than the instruction image
-    // maybe set at threshold of 0.2 difference to be a warning sign
     return sum / (values.length * 255);
 }
 

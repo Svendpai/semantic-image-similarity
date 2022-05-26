@@ -64,7 +64,7 @@ class TripletLossModel implements IImageSimilarityCalculator {
                 if (Platform.OS === 'android') {
                     similarity = (similarity - 0.5) * 2;
                 }
-                similarity = (similarity - 0.7) * 2;
+                similarity = (similarity - 0.7) * 1/0.7;
 
                 const timeEnd = new Date().getTime();
 
