@@ -45,7 +45,7 @@ const CameraContainerView: React.FC<Props> = ({ flashMode, type, setCameraReady,
                 onCameraReady={() => setCameraReady(true)}
                 type={type}
                 flashMode={flashMode}
-                useCamera2Api={true}
+                useCamera2Api={false}
             />
         </Box>
     );
