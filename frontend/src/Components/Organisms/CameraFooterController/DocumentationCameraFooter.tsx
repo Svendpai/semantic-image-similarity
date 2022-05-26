@@ -18,6 +18,7 @@ const DocumentationCameraFooter: React.FC<{
 }> = ({ cameraRef, cameraMode }) => {
     const dispatch = useDispatch();
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+    const galleryPermission = useSelector((state: RootState) => state.camera.galleryPermission);
 
     const takePicture = async () => {
         const imageUri = await CameraUtils.takePicture(cameraRef);
@@ -26,7 +27,20 @@ const DocumentationCameraFooter: React.FC<{
         navigation.navigate('Editimage');
     };
 
-    return <CameraFooterController takePicture={takePicture} cameraMode={cameraMode} />;
+    const openGallery = async () => {
+        dispatch(setGalleryOpen(true));
+        const imageUri = await CameraUtils.openGallery(galleryPermission);
+
+        dispatch(setGalleryOpen(false));
+        if (!imageUri) {
+            //
+            return;
+        }
+        navigation.navigate('Editimage');
+        dispatch(setDocumentationImage(imageUri));
+    };
+
+    return <CameraFooterController takePicture={takePicture} openGallery={openGallery} cameraMode={cameraMode} />;
 };
 
 export default DocumentationCameraFooter;

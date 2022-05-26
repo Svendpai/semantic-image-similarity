@@ -34,16 +34,6 @@ async function reducer(state: EvaluatorState, action: Action) {
                     action.data.documentationImage
                 );
             }
-
-            /*await Promise.all(
-                state.evaluators.map((evaluator) => {
-                    return evaluator.evaluateAsDocumentationImage(
-                        action.data.instructionImage,
-                        action.data.documentationImage
-                    );
-                })
-            );*/
-
             return { evaluators: state.evaluators };
         default:
             throw new Error();

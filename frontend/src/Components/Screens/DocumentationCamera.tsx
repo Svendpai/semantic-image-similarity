@@ -11,7 +11,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../navigation/NavigationTypes';
 import ContainerCenteringContent from '../Atoms/ContainerCenteringContent';
 import ModalCentered, { ModalHandle } from '../Atoms/ModalCentered';
-import DocumentationCameraFooter from '../Organisms/CameraFooterController/InstructionCameraFooter';
+import DocumentationCameraFooter from '../Organisms/CameraFooterController/DocumentationCameraFooter';
 
 type Props = {};
 
@@ -35,7 +35,7 @@ const DocumentationCamera: React.FC<Props> = () => {
             <CameraTemplate
                 CameraBody={<CameraContainer cameraRef={cameraRef} />}
                 CameraHeader={<CameraHeaderController modalRef={ref} />}
-                CameraFooter={<DocumentationCameraFooter cameraRef={cameraRef} />}
+                CameraFooter={<DocumentationCameraFooter cameraRef={cameraRef} cameraMode={'documentation'} />}
             />
             <ModalCentered
                 ref={ref}

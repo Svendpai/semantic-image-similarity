@@ -14,39 +14,12 @@ import CameraUtils from '../../../Utils/CameraUtils';
 const CameraFooterController: React.FC<{
     takePicture: () => void;
     cameraMode: 'instruction' | 'documentation';
-}> = ({ takePicture, cameraMode }) => {
+    openGallery: () => void;
+}> = ({ takePicture, cameraMode, openGallery }) => {
     const availableCameraTypes = useSelector((state: RootState) => state.camera.availableCameraTypes);
-    const galleryPermission = useSelector((state: RootState) => state.camera.galleryPermission);
     const selectedCameraType = useSelector((state: RootState) => state.camera.selectedCameraType);
 
     const dispatch = useDispatch();
-
-    const openGallery = async () => {
-        if (!galleryPermission) {
-            let permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
-            if (permissionResult.granted === false) {
-                alert('Permission to access camera roll is required!');
-                return;
-            }
-        }
-        dispatch(setGalleryOpen(true));
-        let pickerResult = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            allowsEditing: false,
-            aspect: [3, 4],
-            quality: 1,
-        });
-        dispatch(setGalleryOpen(false));
-        if (!pickerResult.cancelled) {
-            if (cameraMode === 'documentation') {
-                navigation.navigate('Editimage');
-                dispatch(setDocumentationImage(pickerResult.uri));
-            } else {
-                navigation.navigate('Home');
-                dispatch(setInstructionImage(pickerResult.uri));
-            }
-        }
-    };
 
     const flipCamera = () => {
         dispatch(

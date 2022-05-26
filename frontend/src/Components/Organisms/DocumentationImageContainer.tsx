@@ -13,6 +13,7 @@ type Props = {};
 const DocumentationImageContainer: React.FC<Props> = () => {
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
     const navigateToDocumentatationImage = () => {
+        console.log('navigating to docuemntaiton');
         navigation.navigate('DocumentationCamera');
     };
     const documentationImage = useSelector((state: RootState) => state.camera.documentationImage);
