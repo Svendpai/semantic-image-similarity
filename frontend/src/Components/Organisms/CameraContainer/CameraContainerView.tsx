@@ -13,8 +13,6 @@ interface Props {
 }
 
 const CameraContainerView: React.FC<Props> = ({ flashMode, type, setCameraReady, cameraRef }) => {
-    const windowWidth = Dimensions.get('window').width;
-
     const getMaxWidth = () => {
         const windowWidth = Dimensions.get('window').width;
 

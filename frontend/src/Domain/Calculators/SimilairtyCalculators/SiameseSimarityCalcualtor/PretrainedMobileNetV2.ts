@@ -8,10 +8,11 @@ import '@tensorflow/tfjs-backend-webgl';
 import '@tensorflow/tfjs-react-native';
 import { IImageSimilarityCalculator } from '../../../Interfaces/IImageSimilarityCalculator';
 import { SimilarityResponse } from '../../../Types/CalculationResponseObjects';
+import { Platform } from 'react-native';
 
 async function decodeImage(img: any): Promise<tf.Tensor3D> {
     const fileUri = img.uri;
-    const imgB64 = await FileSystem.readAsStringAsync(fileUri, {encoding: FileSystem.EncodingType.Base64});
+    const imgB64 = await FileSystem.readAsStringAsync(fileUri, { encoding: FileSystem.EncodingType.Base64 });
     const imgBuffer = tf.util.encodeString(imgB64, 'base64').buffer;
     const raw = new Uint8Array(imgBuffer);
     const imageTensor = decodeJpeg(raw);
@@ -20,7 +21,7 @@ async function decodeImage(img: any): Promise<tf.Tensor3D> {
 
 async function calculateLightLevel(img: any) {
     const fileUri = img.uri;
-    const imgB64 = await FileSystem.readAsStringAsync(fileUri, {encoding: FileSystem.EncodingType.Base64});
+    const imgB64 = await FileSystem.readAsStringAsync(fileUri, { encoding: FileSystem.EncodingType.Base64 });
     const imgBuffer = tf.util.encodeString(imgB64, 'base64').buffer;
     const raw = new Uint8Array(imgBuffer);
     const imageTensor = decodeJpeg(raw);
@@ -35,7 +36,6 @@ async function calculateLightLevel(img: any) {
     // positive values means that the documentation image is darker than the instruction image
     // maybe set at threshold of 0.2 difference to be a warning sign
     return sum / (values.length * 255);
-
 }
 
 async function preprocessImage(imageTensor: tf.Tensor3D) {
@@ -63,19 +63,19 @@ async function loadModel() {
 }
 
 function calculateCosineSimimilarity(A: any, B: any) {
-    var dotproduct=0;
-    var mA=0;
-    var mB=0;
-    for(let i = 0; i < A.length; i++){
-        dotproduct += (A[i] * B[i]);
-        mA += (A[i]*A[i]);
-        mB += (B[i]*B[i]);
+    var dotproduct = 0;
+    var mA = 0;
+    var mB = 0;
+    for (let i = 0; i < A.length; i++) {
+        dotproduct += A[i] * B[i];
+        mA += A[i] * A[i];
+        mB += B[i] * B[i];
     }
     mA = Math.sqrt(mA);
     mB = Math.sqrt(mB);
-    var similarity = (dotproduct)/((mA)*(mB))
+    var similarity = dotproduct / (mA * mB);
     return similarity;
-  }
+}
 
 class SiameseSimilarityCalculator implements IImageSimilarityCalculator {
     model?: tf.LayersModel;
@@ -94,9 +94,11 @@ class SiameseSimilarityCalculator implements IImageSimilarityCalculator {
         };
 
         this.calculateSimilarity = async (image1: string, image2: string) => {
-            
-            if (this.model) {
+            image1 = require('./n0425468000000140.jpg');
+            image2 = require('./n0425468000000253.jpg');
+            const image3 = require('./n0451500300000143.jpg');
 
+            if (this.model) {
                 const timeStart = new Date().getTime();
 
                 const resizedImage1 = await manipulateAsync(image1, [{ resize: { width: 224, height: 224 } }]);
@@ -105,19 +107,22 @@ class SiameseSimilarityCalculator implements IImageSimilarityCalculator {
                 const resizedImage1_pre = await preprocessImage(await decodeImage(resizedImage1));
                 const resizedImage2_pre = await preprocessImage(await decodeImage(resizedImage2));
 
-                const image1Features = (this.model.predict(resizedImage1_pre) as tf.Tensor);
-                const image2Features = (this.model.predict(resizedImage2_pre) as tf.Tensor);
+                const image1Features = this.model.predict(resizedImage1_pre) as tf.Tensor;
+                const image2Features = this.model.predict(resizedImage2_pre) as tf.Tensor;
 
                 const image1LightLevel = await calculateLightLevel(resizedImage1);
                 const image2LightLevel = await calculateLightLevel(resizedImage2);
 
-                const similarity = calculateCosineSimimilarity(image1Features.dataSync(), image2Features.dataSync());
+                let similarity = calculateCosineSimimilarity(image1Features.dataSync(), image2Features.dataSync());
+                if (Platform.OS === 'android') {
+                    similarity = (similarity - 0.5) * 2;
+                }
 
                 const timeEnd = new Date().getTime();
 
-                console.log("image1LightLevel: " + image1LightLevel);
-                console.log("image2LightLevel: " + image2LightLevel);
-                console.log("Light difference: " + (image1LightLevel - image2LightLevel));
+                console.log('image1LightLevel: ' + image1LightLevel);
+                console.log('image2LightLevel: ' + image2LightLevel);
+                console.log('Light difference: ' + (image1LightLevel - image2LightLevel));
 
                 return {
                     responseTime: timeEnd - timeStart,

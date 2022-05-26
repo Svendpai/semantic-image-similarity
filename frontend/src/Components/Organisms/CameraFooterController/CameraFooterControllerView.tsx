@@ -15,7 +15,7 @@ type Props = {
     cameraMode: 'instruction' | 'documentation';
 };
 
-const CameraFooterControllerView: React.FC<Props> = ({
+const CameraFooterView: React.FC<Props> = ({
     openGallery,
     cameraFlipAvailable,
     flipCamera,
@@ -58,4 +58,4 @@ const CameraFooterControllerView: React.FC<Props> = ({
     );
 };
 
-export default CameraFooterControllerView;
+export default CameraFooterView;

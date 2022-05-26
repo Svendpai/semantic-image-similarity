@@ -14,52 +14,18 @@ Platform:
   win32 x64
 
 Trace: 
-  SyntaxError: C:\Users\phili\Desktop\git\semantic-image-similarity\frontend\package.json: Unexpected token < in JSON at position 2
-      at JSON.parse (<anonymous>)
-      at C:\Users\phili\AppData\Roaming\npm\node_modules\yarn\lib\cli.js:1625:59
+  SyntaxError: Unknown token: { line: 8392, col: 2, type: 'INVALID', value: undefined } 8392:2 in C:\Users\phili\Desktop\git\semantic-image-similarity\frontend\yarn.lock
+      at Parser.unexpected (C:\Users\phili\AppData\Roaming\npm\node_modules\yarn\lib\cli.js:64374:11)
+      at Parser.parse (C:\Users\phili\AppData\Roaming\npm\node_modules\yarn\lib\cli.js:64505:14)
+      at parse (C:\Users\phili\AppData\Roaming\npm\node_modules\yarn\lib\cli.js:64579:21)
+      at module.exports.exports.default (C:\Users\phili\AppData\Roaming\npm\node_modules\yarn\lib\cli.js:64141:96)
+      at Function.<anonymous> (C:\Users\phili\AppData\Roaming\npm\node_modules\yarn\lib\cli.js:3064:63)
       at Generator.next (<anonymous>)
       at step (C:\Users\phili\AppData\Roaming\npm\node_modules\yarn\lib\cli.js:310:30)
       at C:\Users\phili\AppData\Roaming\npm\node_modules\yarn\lib\cli.js:321:13
 
 npm manifest: 
   {
-  <<<<<<< HEAD
-    "main": "node_modules/expo/AppEntry.js",
-    "scripts": {
-      "start": "expo start",
-      "android": "expo start --android",
-      "ios": "expo start --ios",
-      "web": "expo start --web",
-      "eject": "expo eject"
-    },
-    "dependencies": {
-      "@reduxjs/toolkit": "^1.8.0",
-      "@types/react-router-native": "^5.1.3",
-      "expo": "~44.0.0",
-      "expo-camera": "~12.1.2",
-      "expo-image-picker": "~12.0.1",
-      "expo-media-library": "~14.0.0",
-      "expo-status-bar": "~1.2.0",
-      "native-base": "^3.3.7",
-      "phash-js": "^0.3.0",
-      "react": "17.0.1",
-      "react-dom": "17.0.1",
-      "react-native": "0.64.3",
-      "react-native-image-overlay": "^0.1.2",
-      "react-native-safe-area-context": "3.3.2",
-      "react-native-svg": "12.1.1",
-      "react-native-web": "0.17.1",
-      "react-redux": "^7.2.6",
-      "react-router-native": "^6.2.2"
-    },
-    "devDependencies": {
-      "@babel/core": "^7.12.9",
-      "@types/react": "~17.0.21",
-      "@types/react-native": "~0.64.12",
-      "typescript": "~4.3.5"
-    },
-    "private": true
-  =======
       "name": "frontendv2",
       "version": "1.0.0",
       "main": "node_modules/expo/AppEntry.js",
@@ -126,7 +92,6 @@ npm manifest:
           "typescript": "~4.3.5"
       },
       "private": true
-  >>>>>>> fdec56bb67e72e3892570297d5b0f37f088ad134
   }
 
 yarn manifest: 
@@ -8538,19 +8503,10 @@ Lockfile:
     resolved "https://registry.yarnpkg.com/path-parse/-/path-parse-1.0.7.tgz#fbc114b60ca42b30d9daf5858e4bd68bbedb6735"
     integrity sha512-LDJzPVEEEPR+y48z93A0Ed0yXb8pAByGWo/k5YYdYgpY2/2EsOsksJrq7lOHxryrVOn1ejG6oAp8ahvOIQD8sw==
   
-  <<<<<<< HEAD
-  phash-js@^0.3.0:
-    version "0.3.0"
-    resolved "https://registry.yarnpkg.com/phash-js/-/phash-js-0.3.0.tgz#c89823cd9626a3c7f9d485cf2602fcb1b0975ec2"
-    integrity sha512-3Mn4V1W1YEysm4SQtLkrtt02mgke92x9gLIyKhFrTk+ytweYt1EOnzqiQptJe9YsS5fZc5myGmjlzuCfr9iBgw==
-    dependencies:
-      stacktrace-js "^2.0.2"
-  =======
   path-type@^4.0.0:
     version "4.0.0"
     resolved "https://registry.yarnpkg.com/path-type/-/path-type-4.0.0.tgz#84ed01c0a7ba380afe09d90a8c180dcd9d03043b"
     integrity sha512-gDKb8aZMDeD/tZWs9P6+q0J9Mwkdl6xMV8TjnGP3qJVJ06bdMgkbBlLU8IdfOsIsFz2BW1rNVT3XuNEl8zPAvw==
-  >>>>>>> fdec56bb67e72e3892570297d5b0f37f088ad134
   
   picocolors@^1.0.0:
     version "1.0.0"
@@ -9638,16 +9594,7 @@ Lockfile:
     resolved "https://registry.yarnpkg.com/source-map-url/-/source-map-url-0.4.1.tgz#0af66605a745a5a2f91cf1bbf8a7afbc283dec56"
     integrity sha512-cPiFOTLUKvJFIg4SKVScy4ilPPW6rFgMgfuZJPNoDuMs3nC1HbMUycBoJw77xFIp6z1UJQJOfx6C9GMH80DiTw==
   
-  <<<<<<< HEAD
-  source-map@0.5.6:
-    version "0.5.6"
-    resolved "https://registry.yarnpkg.com/source-map/-/source-map-0.5.6.tgz#75ce38f52bf0733c5a7f0c118d81334a2bb5f412"
-    integrity sha1-dc449SvwczxafwwRjYEzSiu19BI=
-  
-  source-map@^0.5.0, source-map@^0.5.6:
-  =======
   source-map@^0.5.6:
-  >>>>>>> fdec56bb67e72e3892570297d5b0f37f088ad134
     version "0.5.7"
     resolved "https://registry.yarnpkg.com/source-map/-/source-map-0.5.7.tgz#8a039d2d1021d22d1ea14c80d8ea468ba2ef3fcc"
     integrity sha1-igOdLRAh0i0eoUyA2OpGi6LvP8w=
@@ -9733,21 +9680,12 @@ Lockfile:
       stackframe "^1.1.1"
   =======
   stack-utils@^2.0.2, stack-utils@^2.0.3:
-    version "2.0.5"
-    resolved "https://registry.yarnpkg.com/stack-utils/-/stack-utils-2.0.5.tgz#d25265fca995154659dbbfba3b49254778d2fdd5"
-    integrity sha512-xrQcmYhOsn/1kX+Vraq+7j4oE2j/6BFscZ0etmYg81xuM8Gq0022Pxb8+IqgOFUIaxHs0KaSb7T1+OegiNrNFA==
-    dependencies:
-      escape-string-regexp "^2.0.0"
-  >>>>>>> fdec56bb67e72e3892570297d5b0f37f088ad134
-  
-  stackframe@^1.1.1:
     version "1.2.1"
     resolved "https://registry.yarnpkg.com/stackframe/-/stackframe-1.2.1.tgz#1033a3473ee67f08e2f2fc8eba6aef4f845124e1"
     integrity sha512-h88QkzREN/hy8eRdyNhhsO7RSJ5oyTqxxmmn0dzBIMUclZsjpfmrsg81vp8mjjAs2vAZ72nyWxRUwSwmh0e4xg==
   
   stacktrace-gps@^3.0.4:
     version "3.0.4"
-    resolved "https://registry.yarnpkg.com/stacktrace-gps/-/stacktrace-gps-3.0.4.tgz#7688dc2fc09ffb3a13165ebe0dbcaf41bcf0c69a"
     integrity sha512-qIr8x41yZVSldqdqe6jciXEaSCKw1U8XTXpjDuy0ki/apyTn/r3w9hDAAQOhZdxvsC93H+WwwEu5cq5VemzYeg==
     dependencies:
       source-map "0.5.6"

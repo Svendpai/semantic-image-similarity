@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../../Redux/store';
-import CameraFooterControllerView from './CameraFooterControllerView';
+import CameraFooterView from './CameraFooterControllerView';
 import * as ImagePicker from 'expo-image-picker';
 import { setGalleryOpen, setSelectedCameraType } from '../../../Redux/Slices/cameraSlice';
 import { Camera, CameraCapturedPicture } from 'expo-camera';
@@ -9,25 +9,17 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../../navigation/NavigationTypes';
 import { setDocumentationImage, setInstructionImage } from '../../../Redux/Slices/cameraSlice';
+import CameraUtils from '../../../Utils/CameraUtils';
 
 const CameraFooterController: React.FC<{
-    cameraRef: React.RefObject<Camera>;
+    takePicture: () => void;
     cameraMode: 'instruction' | 'documentation';
-}> = ({ cameraRef, cameraMode }) => {
+}> = ({ takePicture, cameraMode }) => {
     const availableCameraTypes = useSelector((state: RootState) => state.camera.availableCameraTypes);
     const galleryPermission = useSelector((state: RootState) => state.camera.galleryPermission);
     const selectedCameraType = useSelector((state: RootState) => state.camera.selectedCameraType);
 
     const dispatch = useDispatch();
-    const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-
-    const next = () => {
-        if (cameraMode === 'instruction') {
-            navigation.navigate('Home');
-        } else {
-            navigation.navigate('Editimage');
-        }
-    };
 
     const openGallery = async () => {
         if (!galleryPermission) {
@@ -64,22 +56,8 @@ const CameraFooterController: React.FC<{
         );
     };
 
-    const takePicture = async () => {
-        const picture: CameraCapturedPicture | undefined = await cameraRef.current?.takePictureAsync();
-        if (!picture) {
-            throw Error('no picture found. Could not navigate');
-        }
-
-        if (cameraMode === 'documentation') {
-            dispatch(setDocumentationImage(picture.uri));
-        } else {
-            dispatch(setInstructionImage(picture.uri));
-        }
-        next();
-    };
-
     return (
-        <CameraFooterControllerView
+        <CameraFooterView
             cameraFlipAvailable={availableCameraTypes.length > 1}
             openGallery={openGallery}
             flipCamera={flipCamera}

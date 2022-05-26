@@ -14,6 +14,7 @@ import { RootState } from '../../Redux/store';
 import { useSelector } from 'react-redux';
 import ContainerCenteringContent from '../Atoms/ContainerCenteringContent';
 import ModalCentered, { ModalHandle } from '../Atoms/ModalCentered';
+import InstructionCameraFooter from '../Organisms/CameraFooterController/InstructionCameraFooter';
 
 type Props = {};
 
@@ -26,7 +27,7 @@ const InstructionCamera: React.FC<Props> = () => {
             <CameraTemplate
                 CameraBody={<CameraContainer cameraRef={cameraRef} />}
                 CameraHeader={<CameraHeaderController modalRef={modalRef} />}
-                CameraFooter={<CameraFooterController cameraRef={cameraRef} cameraMode='instruction' />}
+                CameraFooter={<InstructionCameraFooter cameraRef={cameraRef} />}
             />
             <ModalCentered onContinue={() => {}} ref={modalRef} />
         </ContainerCenteringContent>
