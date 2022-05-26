@@ -33,8 +33,8 @@ const DocumentationCamera: React.FC<Props> = () => {
     return (
         <ContainerCenteringContent>
             <CameraTemplate
-                CameraBody={<CameraContainer cameraRef={cameraRef} />}
-                CameraHeader={<CameraHeaderController modalRef={ref} />}
+                CameraBody={<CameraContainer cameraRef={cameraRef} overlayEnabled={true} />}
+                CameraHeader={<CameraHeaderController modalRef={ref} overlayFunctionalityEnabled={true} />}
                 CameraFooter={<DocumentationCameraFooter cameraRef={cameraRef} cameraMode={'documentation'} />}
             />
             <ModalCentered

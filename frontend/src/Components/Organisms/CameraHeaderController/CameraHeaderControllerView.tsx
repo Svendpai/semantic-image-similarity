@@ -12,21 +12,36 @@ type Props = {
     goBack: () => void;
     flashAvailable: boolean;
     realTimeUpdatesAvailable: boolean;
+    overlayActivated: boolean;
+    toggleOverlay: () => void;
+    overlayEnabled: boolean;
 };
 
 const CameraHeaderControllerView: React.FC<Props> = ({
     toggleFlash,
     toggleRealTimeUpdates,
+    toggleOverlay,
     realTimeUpdatesActivated,
     flashActivated,
     flashAvailable,
     realTimeUpdatesAvailable,
     goBack,
+    overlayActivated,
+    overlayEnabled,
 }) => {
     return (
         <ContainerHorizontalAlign alignItems='space-between' paddingX={0} paddingY={10}>
             <IconButton icon='back' iconColor='white' onPress={goBack} height={'large'} iconSize='medium' />
             <Spacer />
+            {overlayEnabled && (
+                <IconButton
+                    icon={overlayActivated ? 'overlay-on' : 'overlay-off'}
+                    iconColor='white'
+                    onPress={toggleOverlay}
+                    height={'large'}
+                    iconSize='medium'
+                />
+            )}
             {flashAvailable && (
                 <IconButton
                     icon={flashActivated ? 'flash-on' : 'flash-off'}

@@ -18,6 +18,7 @@ export interface CameraState {
     liveFeedbackMethod: RegisteredEvaluator;
     documentationImage: string | undefined;
     instructionImage: string | undefined;
+    overlayActivated: boolean;
 }
 
 const initialState: CameraState = {
@@ -36,6 +37,7 @@ const initialState: CameraState = {
     liveFeedbackMethod: 'TestEvaluator',
     documentationImage: undefined,
     instructionImage: undefined,
+    overlayActivated: false,
 };
 
 export const cameraSlice = createSlice({
@@ -81,12 +83,16 @@ export const cameraSlice = createSlice({
         setSelectedLiveFeedbackMethod: (state, action: PayloadAction<RegisteredEvaluator>) => {
             state.liveFeedbackMethod = action.payload;
         },
+        toggleOverlay: (state) => {
+            state.overlayActivated = !state.overlayActivated;
+        },
     },
 });
 
 // Action creators are generated for each case reducer function
 export const {
     setDocumentationImage,
+    toggleOverlay,
     setInstructionImage,
     setAvailableCameraTypes,
     toggleRealTimeProcessing,

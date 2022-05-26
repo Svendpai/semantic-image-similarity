@@ -6,20 +6,23 @@ import { useSelector } from 'react-redux';
 import { RootStackParamList } from '../../navigation/NavigationTypes';
 import { RootState } from '../../Redux/store';
 import ContainerCenteringContent from '../Atoms/ContainerCenteringContent';
+import { ModalHandle } from '../Atoms/ModalCentered';
 import ImagePlaceholder from '../Molecules/ImagePlaceholder';
 
-type Props = {};
+type Props = {
+    warningModalRef: React.RefObject<ModalHandle>;
+};
 
-const InstructionImageContainer: React.FC<Props> = () => {
-    const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-    const navigateToInstructionCamera = () => {
-        navigation.navigate('InstructionCamera');
+const InstructionImageContainer: React.FC<Props> = ({ warningModalRef }) => {
+    
+    const displayWarning = () => {
+        warningModalRef?.current?.display();
     };
 
     const instructionImage = useSelector((state: RootState) => state.camera.instructionImage);
     return (
         <ContainerCenteringContent>
-            <ImagePlaceholder type='instruction' onPress={navigateToInstructionCamera} imageUri={instructionImage} />
+            <ImagePlaceholder type='instruction' onPress={displayWarning} imageUri={instructionImage} />
         </ContainerCenteringContent>
     );
 };

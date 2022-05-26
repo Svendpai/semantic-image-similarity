@@ -39,29 +39,44 @@ class DefaultEvaluator implements IDocumentationImageEvaluator {
         this.getWarnings = (evaluation: ImageEvaluation) => {
             const warnings: Warning[] = [];
             if (evaluation.similarity.similarity < this.similarityCalculator.acceptedMeasureThresholds.okay) {
+                warnings.push({
+                    type: 'Similarity',
+                    warning: `The images are not similar enough.`,
+                });
+            }
+            if (evaluation.lightLevel.lightLevel < this.lightLevelCalculator.acceptedMeasureThresholds.okay) {
+                warnings.push({
+                    type: 'LightLevel',
+                    warning: `Light level to low: try turning on flash`,
+                });
             }
             return warnings;
         };
 
         this.evaluateAsDocumentationImage = async (documentationImage: string, instructionImage: string) => {
-            console.log('calculating similarity with: ' + this.name);
             const similarity = await this.similarityCalculator.calculateSimilarity(
                 documentationImage,
                 instructionImage
             );
-            console.log(similarity.similarity);
             const blur = await this.blurCalculator.calculateDegreeOfBlur(documentationImage);
-            const lightLevel = await this.lightLevelCalculator.calculateLightLevel(documentationImage);
+            const lightLevel1 = await this.lightLevelCalculator.calculateLightLevel(documentationImage);
+            const lightLevel2 = await this.lightLevelCalculator.calculateLightLevel(instructionImage);
+            const lightLevelDistance = Math.abs(lightLevel1.lightLevel - lightLevel2.lightLevel);
 
             const evaluation: ImageEvaluation = {
                 similarity: similarity,
                 blurred: blur,
-                lightLevel: lightLevel,
+                lightLevel: {
+                    lightLevel: lightLevelDistance,
+                    responseTime: lightLevel1.responseTime + lightLevel2.responseTime,
+                },
                 producer: this.name,
                 documentationIsValid: similarity.similarity > this.similarityCalculator.acceptedMeasureThresholds.okay,
                 warnings: [],
             };
-            evaluation.warnings = this.getWarnings(evaluation);
+            if (!evaluation.documentationIsValid) {
+                evaluation.warnings = this.getWarnings(evaluation);
+            }
             this.latestEvaluation = evaluation;
             return evaluation;
         };

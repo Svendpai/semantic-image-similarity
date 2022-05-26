@@ -4,17 +4,21 @@ import { FlashMode } from 'expo-camera';
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootStackParamList } from '../../../navigation/NavigationTypes';
-import { setSelectedFlashMode, toggleRealTimeProcessing } from '../../../Redux/Slices/cameraSlice';
+import { setSelectedFlashMode, toggleOverlay, toggleRealTimeProcessing } from '../../../Redux/Slices/cameraSlice';
 import { RootState } from '../../../Redux/store';
 import ContainerCenteringContent from '../../Atoms/ContainerCenteringContent';
 import ModalCentered, { ModalHandle } from '../../Atoms/ModalCentered';
 import CameraHeaderControllerView from './CameraHeaderControllerView';
 
-const CameraHeaderController: React.FC<{ modalRef: React.RefObject<ModalHandle> }> = ({ modalRef }) => {
+const CameraHeaderController: React.FC<{
+    modalRef: React.RefObject<ModalHandle>;
+    overlayFunctionalityEnabled: boolean;
+}> = ({ modalRef, overlayFunctionalityEnabled }) => {
     const selectedFlashMode = useSelector((state: RootState) => state.camera.flashMode);
     const realTimeUpdatesAvailable = useSelector((state: RootState) => state.camera.realTimeProcessingAvailable);
     const realTimeProcessingToggled = useSelector((state: RootState) => state.camera.realTimeProcessingToggled);
     const availableFlashModes = useSelector((state: RootState) => state.camera.availabelFlashModes);
+    const overlayActivated = useSelector((state: RootState) => state.camera.overlayActivated);
 
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
     const dispatch = useDispatch();
@@ -29,6 +33,9 @@ const CameraHeaderController: React.FC<{ modalRef: React.RefObject<ModalHandle> 
     const goBack = () => {
         navigation.navigate('Home');
     };
+    const _toggleOverlay = () => {
+        dispatch(toggleOverlay());
+    };
 
     return (
         <CameraHeaderControllerView
@@ -40,6 +47,9 @@ const CameraHeaderController: React.FC<{ modalRef: React.RefObject<ModalHandle> 
             flashAvailable={availableFlashModes.length > 1}
             realTimeUpdatesAvailable={realTimeUpdatesAvailable}
             goBack={goBack}
+            overlayActivated={overlayActivated}
+            overlayEnabled={overlayFunctionalityEnabled}
+            toggleOverlay={_toggleOverlay}
         />
     );
 };
