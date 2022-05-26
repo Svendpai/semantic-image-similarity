@@ -26,6 +26,10 @@ def load_image_norm(path, _min = 0, _max = 1):
     img = load_img(path, target_size=(224, 224), interpolation='bilinear')
     x = img_to_array(img)
     x = normalize_pixels_from_to(x, _to_min=_min, _to_max=_max)
+    # subtract the mean to make the training more robust against Gaussian noise
+    # mean = [0.485, 0.456, 0.406]
+    # std = [0.229, 0.224, 0.225]
+    # x = (x - mean) / std
     x = np.expand_dims(x, axis=0)
     return x
 
@@ -62,6 +66,12 @@ def cosine_similarity(feature_1, feature_2):
     """calculate cosine similarity between two vectors"""
 
     return np.sum(feature_1 * feature_2) / (np.sqrt(np.sum(np.square(feature_1))) * np.sqrt(np.sum(np.square(feature_2))))
+
+def cosine_similarity_2(vects):
+    """calculate cosine similarity between two vectors using tensorflow"""
+
+    x, y = vects
+    return K.sum(x * y) / K.sqrt(K.sum(K.square(x))) * K.sqrt(K.sum(K.sum(K.square(y))))
 
 def load_images(path, _min_norm = 0, _max_norm = 1):
     """
