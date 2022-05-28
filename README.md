@@ -2,8 +2,8 @@
 
 This project is the product of the bachelor project for group 4:
 
-* ![Svend Anton Vibæk](svvib19@student.sdu.dk)
-* ![Philip Eckhoff Rønnest](phroe19@student.sdu.dk)
+* [Svend Anton Vibæk](svvib19@student.sdu.dk)
+* [Philip Eckhoff Rønnest](phroe19@student.sdu.dk)
 
 University of Southern Denmark, SDU, Mærsk Mc-Kinney Møller Instituttet, T510012102
 
