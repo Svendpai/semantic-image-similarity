@@ -4,22 +4,18 @@ import PretrainedMobileNetV2Model from './Calculators/SimilairtyCalculators/Pret
 import ContrastiveLossModel from './Calculators/SimilairtyCalculators/ContrastiveLossModelCalculator/ContrastiveLossModel';
 import TripletLossModel from './Calculators/SimilairtyCalculators/TripletLossModelCalculator/TripletLossModel';
 import BinaryCrossEntropyLossModel from './Calculators/SimilairtyCalculators/BinaryCrossEntropyLossCalculator/BinaryCrossEntropyLossModel';
-import { TestSimilarityCalculator } from './Calculators/SimilairtyCalculators/TestModel/TestSimilarityCalculator';
 import SiameseEvaluator from './Evaluators/SiameseEvaluator/SiameseDemo/SiameseEvaluator';
-import { TestEvaluator } from './Evaluators/TestEvaluator';
 import { IDocumentationImageEvaluator } from './Interfaces/IDocumentationImageEvaluator';
 import { IImageBlurCalculator } from './Interfaces/IImageBlurCalculator';
 import { IImageLightLevelCalculator } from './Interfaces/IImageLightLevelCalculator';
 import { IImageSimilarityCalculator } from './Interfaces/IImageSimilarityCalculator';
 
 export type RegisteredEvaluator =
-    | 'TestEvaluator'
     | 'Pretrained MobileNetV2 Evaluator'
     | 'Contrastive Loss Evaluator'
     | 'Triplet Loss Evaluator'
     | 'Binary Cross Entropy Loss Evaluator';
 export type RegisteredSimilarityCalculator =
-    | 'TestSimilarityCalculator'
     | 'PretrainedMobileNetV2Calculator'
     | 'ContrastiveLossCalculator'
     | 'TripletLossCalculator'
@@ -31,7 +27,6 @@ export type RegisteredBlurCalculator = 'TestBlurCalculator';
     TestEvaluator: new TestEvaluator(),
 };*/
 const availableSimilarityCalculators: { [key in RegisteredSimilarityCalculator]: IImageSimilarityCalculator } = {
-    TestSimilarityCalculator: new TestSimilarityCalculator(),
     PretrainedMobileNetV2Calculator: new PretrainedMobileNetV2Model(),
     ContrastiveLossCalculator: new ContrastiveLossModel(),
     TripletLossCalculator: new TripletLossModel(),
@@ -87,12 +82,6 @@ const EvaluatorAPI = {
         }
 
         const evaluators: IDocumentationImageEvaluator[] = [
-            new TestEvaluator(
-                similairtyCalculators.TestSimilarityCalculator,
-                lightLevelCalculators.TestLightLevelCalculator,
-                blurCalculators.TestBlurCalculator,
-                'TestEvaluator'
-            ),
             new SiameseEvaluator(
                 'Pretrained MobileNetV2 Evaluator',
                 similairtyCalculators.PretrainedMobileNetV2Calculator,

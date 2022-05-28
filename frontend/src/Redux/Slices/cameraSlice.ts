@@ -34,7 +34,7 @@ const initialState: CameraState = {
     cameraMode: undefined,
     cameraReady: false,
     tempImage: undefined,
-    liveFeedbackMethod: 'TestEvaluator',
+    liveFeedbackMethod: 'Pretrained MobileNetV2 Evaluator',
     documentationImage: undefined,
     instructionImage: undefined,
     overlayActivated: false,

@@ -55,16 +55,19 @@ class BinaryCrossEntropyLossModel implements IImageSimilarityCalculator {
                 const resizedImage1_pre = await preprocessImage(decodedImage1);
                 const resizedImage2_pre = await preprocessImage(decodedImage2);
 
-                const image1Features = this.model.predict(resizedImage1_pre) as tf.Tensor;
-                const image2Features = this.model.predict(resizedImage2_pre) as tf.Tensor;
+                const imageFeatures = (this.model.predict([resizedImage1_pre, resizedImage2_pre]) as tf.Tensor);
+                // const image2Features = this.model.predict(resizedImage2_pre) as tf.Tensor;
 
-                let similarity = calculateCosineSimimilarity(image1Features.dataSync(), image2Features.dataSync());
+                // let similarity = calculateCosineSimimilarity(image1Features.dataSync(), image2Features.dataSync());
+
+                let similarity = imageFeatures.dataSync()[0];
+                // console.log("similarity: " + similarity);
 
                 // There is a bug in android, where the image compression is wrong leading to a wrong similarity value
-                if (Platform.OS === 'android') {
-                    similarity = (similarity - 0.5) * 2;
-                }
-                similarity = (similarity - 0.7) * 2;
+                // if (Platform.OS === 'android') {
+                //     similarity = (similarity - 0.5) * 2;
+                // }
+                // similarity = (similarity - 0.7) * 2;
 
                 const timeEnd = new Date().getTime();
 
