@@ -9,6 +9,8 @@ University of Southern Denmark (SDU) <br>
 Mærsk Mc-Kinney Møller Instituttet <br>
 T510012102, Bachelorprojekt (F22)
 
+> :warning: The `/deep-learning` folder contains a lot of experimental code
+
 ## Install dependencies
 
 ```
