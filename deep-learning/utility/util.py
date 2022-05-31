@@ -136,6 +136,32 @@ def create_triplets(folders):
 
     return np.array(anchor_images), np.array(positive_images), np.array(negative_images)
 
+def create_triplets_v2(folders):
+
+    anchor_images = []
+    positive_images = []
+    negative_images = []
+    
+    for i, images in enumerate(folders):
+        for j in range(len(images)):
+            for k in range(j+1, len(images)):
+                if(j == k):
+                    continue
+
+                random_class_index = __get_random_index_from_array_that_is_not_equal_to(folders, i)
+                
+
+                image_anchor = images[j][0]
+                image_positive = images[k][0]
+                image_negative = folders[random_class_index][np.random.randint(0, len(folders[random_class_index]))][0]
+
+                anchor_images.append(image_anchor)
+                positive_images.append(image_positive)
+                negative_images.append(image_negative)
+
+    return np.array(anchor_images), np.array(positive_images), np.array(negative_images)
+
+
 def create_pairs(folders):
 
     anchor_images, positive_images, negative_images  = create_triplets(folders)
