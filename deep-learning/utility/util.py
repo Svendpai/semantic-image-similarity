@@ -179,22 +179,21 @@ def create_pairs(folders):
     return np.array(data), np.array(labels)
         
 
-    # for i, images in enumerate(folders):
-    #     for j in range(len(images)):
+def create_pairs_v2(folders):
+    
+    anchor_images, positive_images, negative_images  = create_triplets_v2(folders)
 
-    #         random_class_index = __get_random_index_from_array_that_is_not_equal_to(folders, i)
+    data = []
+    labels = []
 
-    #         image_anchor = images[j][0]
-    #         image_positive = images[(j + 1) % len(images)][0]
-    #         image_negative = folders[random_class_index][np.random.randint(0, len(folders[random_class_index]))][0]
+    for i in range(len(anchor_images)):
+        data.append([anchor_images[i], positive_images[i]])
+        labels.append(1)
 
-    #         data.append([image_anchor, image_positive])
-    #         labels.append(1)
+        data.append([anchor_images[i], negative_images[i]])
+        labels.append(0)
 
-    #         data.append([image_anchor, image_negative])
-    #         labels.append(0)
-
-    # return np.array(data), np.array(labels)
+    return np.array(data), np.array(labels)
 
 """
 def create_pairs(path, _min_norm = 0, _max_norm = 1):
